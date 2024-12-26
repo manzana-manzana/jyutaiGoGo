@@ -1,3 +1,22 @@
+<<<<<<< HEAD
+// const express = require("express");
+// const cors = require("cors");
+//
+// function setupServer() {
+//   const app = express();
+//   app.use(cors());
+//
+//   app.use(express.json());
+//
+//   app.use("/", express.static("../frontend/dist/"));
+//
+//   return app;
+// }
+//
+// module.exports = {
+//   setupServer,
+// };
+=======
 const express = require("express");
 // const cors = require("cors");
 // const path = require("path");
@@ -54,3 +73,4 @@ function setupServer() {
 module.exports = {
   setupServer,
 };
+>>>>>>> origin/main
