@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // const express = require("express");
 // const cors = require("cors");
 //
@@ -16,7 +16,7 @@
 // module.exports = {
 //   setupServer,
 // };
-=======
+
 const express = require("express");
 // const cors = require("cors");
 // const path = require("path");
@@ -73,4 +73,3 @@ function setupServer() {
 module.exports = {
   setupServer,
 };
->>>>>>> origin/main
