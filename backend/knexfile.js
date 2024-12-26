@@ -12,11 +12,12 @@ module.exports = {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
     },
+    // useNullAsDefault: true,
     migrations: {
-      directory: "../server/db/migrations",
+      directory: "./db/migrations",
     },
     seeds: {
-      directory: "../server/db/seeds",
+      directory: "./db/seeds",
     },
   },
   production: {

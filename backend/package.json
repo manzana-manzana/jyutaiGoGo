@@ -7,7 +7,7 @@
     "build": "npm install && npm run migrate-down && npm run migrate-latest && npm run seed-data",
     "dev": "node_modules/.bin/nodemon ./src/index.js",
     "start": "node src/index.js",
-    "migrate-make": "node_modules/.bin/knex migrate:make",
+    "migrate-make": "npx knex migrate:make --knexfile ./knexfile.js",
     "migrate-latest": "node_modules/.bin/knex migrate:latest",
     "migrate-rollback": "node_modules/.bin/knex migrate:rollback",
     "seed-make": "node_modules/.bin/knex seed:make",
@@ -17,10 +17,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "knex": "^3.1.0"
+    "knex": "^3.1.0",
+    "pg": "^8.13.1",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",

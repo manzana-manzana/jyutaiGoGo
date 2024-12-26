@@ -20,6 +20,7 @@ import {
   IRtcEngineEventHandler,
 } from 'react-native-agora';
 
+
 // Define basic information
 const appId = '12d6ce5a43d740298dc00619516bb4b2';
 const token = '007eJxTYEi5OYelrfhHSu5h5n6Zk6+X7O86LRZV+rVHSvJd24u9jE0KDIZGKWbJqaaJJsYp5iYGRpYWKckGBmaGlqaGZklJJklGpgsy0hsCGRmOPn7FzMgAgSA+K0NJcWl6KQMDAMPcIWM=';
