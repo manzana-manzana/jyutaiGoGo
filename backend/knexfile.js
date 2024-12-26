@@ -17,7 +17,11 @@ module.exports = {
       directory: "./db/migrations",
     },
     seeds: {
+<<<<<<< HEAD
       directory: "./db/seeds",
+=======
+      directory: "./db/migrations",
+>>>>>>> origin/main
     },
   },
   production: {

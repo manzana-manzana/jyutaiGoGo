@@ -11,6 +11,7 @@ app.post("/api/users/locations", async (req, res) => {
     return res.status(400).json({ error: "Invalid request data" });
   }
 
+<<<<<<< HEAD
   const insertData = {
     user_id: req.body.user_id,
     latitude: location.latitude,
@@ -24,6 +25,13 @@ app.post("/api/users/locations", async (req, res) => {
     console.error("Error inserting location:", error.message);
     res.status(500).json({ error: "Failed to insert location" });
   }
+=======
+const PORT = process.env.PORT;
+const HOST = process.env.DB_HOST
+
+app.listen(PORT, () => {
+  console.log(`Server running on: https://${HOST}:${PORT}/`);
+>>>>>>> origin/main
 });
 
 // userId(uuid)を保存

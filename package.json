@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "npm run build --prefix backend",
+    "start": "npm run start --prefix backend"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}
