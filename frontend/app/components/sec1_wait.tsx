@@ -76,7 +76,7 @@ export default function Sec1_Wait()  {
         <View style={styles.container}>
             <Video
                 source={require('../../assets/movies/sec1_wait.mp4')}
-                style={{ width: '100%', height: '100%' }}
+                style={{ width: '70%', height: '40%' }}
                 controls={false}
                 repeat={true}
             />
@@ -113,7 +113,7 @@ const thisStyles = StyleSheet.create({
         top: '15%',
         width:200,
         height:200,
-        color: 'white',
+        color: 'gray',
         fontSize: moderateScale(50),
         fontWeight: 'bold',
         textAlign: 'center',
@@ -123,7 +123,7 @@ const thisStyles = StyleSheet.create({
         position: 'absolute',
         top: '20%',
         width:200,
-        color: 'white',
+        color: 'gray',
         fontSize: moderateScale(50),
         fontWeight: 'bold',
         textAlign: 'center',

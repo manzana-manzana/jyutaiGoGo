@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // const express = require("express");
 // const cors = require("cors");
 //
@@ -16,14 +16,11 @@
 // module.exports = {
 //   setupServer,
 // };
-=======
+
 const express = require("express");
 // const cors = require("cors");
 // const path = require("path");
 const amiVoiceController = require("../controllers/amivoice.js")
-const formidable = require("formidable");
-const FormData = require('form-data');
-const fs = require('fs');
 const  multer= require("multer")
 
 
@@ -73,4 +70,3 @@ function setupServer() {
 module.exports = {
   setupServer,
 };
->>>>>>> origin/main

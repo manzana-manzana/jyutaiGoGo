@@ -13,7 +13,7 @@ export default function Sec0_3_Opening()  {
     return (
         <View style={styles.container}>
             <Video
-                source={require('../../assets/movies/sec0_3_opening.mov')}
+                source={require('../../assets/movies/sec0_3_opening.mp4')}
                 style={{ width: '100%', height: '100%' }}
                 controls={false}
                 repeat={true}
