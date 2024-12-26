@@ -21,7 +21,7 @@ export default function Start()  {
     return (
         <View style={{marginTop:50}}>
             <Text>{screen}</Text>
-            <Button title='最初に戻る' onPress={()=>{
+            <Button title='最初に戻る/　ここをクリック後、手動でHomeへGO' onPress={()=>{
                 setScreen('sec0_1')
                 setIsJam(false)
                 setIsTalk(false)
