@@ -11,7 +11,8 @@
     "migrate-latest": "node_modules/.bin/knex migrate:latest",
     "migrate-rollback": "node_modules/.bin/knex migrate:rollback",
     "seed-make": "node_modules/.bin/knex seed:make",
-    "seed-run": "node_modules/.bin/knex seed:run"
+    "seed-run": "node_modules/.bin/knex seed:run",
+
   },
   "author": "",
   "license": "ISC",
