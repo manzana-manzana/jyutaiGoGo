@@ -7,7 +7,7 @@
     "build": "npm install && npm run migrate-down && npm run migrate-latest && npm run seed-data",
     "dev": "node_modules/.bin/nodemon ./src/index.js",
     "start": "node src/index.js",
-    "migrate-make": "node_modules/.bin/knex migrate:make",
+    "migrate-make": "npx knex migrate:make --knexfile ./knexfile.js",
     "migrate-latest": "node_modules/.bin/knex migrate:latest",
     "migrate-rollback": "node_modules/.bin/knex migrate:rollback",
     "seed-make": "node_modules/.bin/knex seed:make",
@@ -17,10 +17,17 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/multer": "^1.4.12",
+    "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "knex": "^3.1.0"
+    "form-data": "^4.0.1",
+    "formidable": "^3.5.2",
+    "knex": "^3.1.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
+    "require": "^2.4.20"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",
