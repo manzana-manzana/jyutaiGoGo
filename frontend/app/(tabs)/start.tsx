@@ -10,7 +10,6 @@ import {
 import { PermissionsAndroid, Platform, Image } from 'react-native';
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
 import {isJamAtom, isTalkAtom, screenAtom} from "@/app/atom";
-import Video from "react-native-video";
 
 export default function Start()  {
     const [screen, setScreen] = useAtom(screenAtom)

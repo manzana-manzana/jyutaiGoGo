@@ -1,6 +1,5 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import Video from 'react-native-video';
 import {styles} from "@/app/style";
 
 export default function Sec3_Read()  {

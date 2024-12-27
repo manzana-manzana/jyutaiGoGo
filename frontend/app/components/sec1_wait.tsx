@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import Video from 'react-native-video';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import {styles} from "@/app/style";
@@ -7,7 +6,7 @@ import {useAtom} from "jotai";
 import {apiAddressAtom, isJamAtom, isTalkAtom} from "@/app/atom";
 import {amiVoice} from "@/app/components/sec1_wait_amiVoice";
 import {useAtomValue} from "jotai/index";
-import { Audio } from "expo-av";
+import { Audio, Video } from "expo-av";
 
 
 export default function Sec1_Wait()  {
@@ -27,7 +26,15 @@ export default function Sec1_Wait()  {
             );
             // setSound(sound);
             await sound.replayAsync();
-            await sound.setOnPlaybackStatusUpdate((status) => {
+            sound.setOnPlaybackStatusUpdate((status) => {
+                // 1. ステータスが読み込み完了しているかどうかをチェック
+                if (!status.isLoaded) {
+                    // ここでは status は AVPlaybackStatusError かもしれない
+                    console.log('音声のロードに失敗、もしくはまだロード中');
+                    return;
+                }
+                // 2. ステータスが成功かつ loaded であるとわかった時点で
+                //    status は AVPlaybackStatusSuccess として扱える
                 if (status.didJustFinish) {
                     console.log('音声再生が終了');
                 }
@@ -43,6 +50,10 @@ export default function Sec1_Wait()  {
         setTimeout(async() => {
             setIsRecording(false)
             const amiRes = await amiVoice.stopRecording(apiAddress)
+
+            if (!amiRes) {
+                return; // amiResの型ガード (TypeScriptエラー回避)
+            }
 
             console.log("sec1_amires;",amiRes)
             setIsTalk(amiRes.isRes)
@@ -77,8 +88,8 @@ export default function Sec1_Wait()  {
             <Video
                 source={require('../../assets/movies/sec1_wait.mp4')}
                 style={{ width: '70%', height: '40%' }}
-                controls={false}
-                repeat={true}
+                useNativeControls={false} // react-native-video の controls={false} に相当
+                isLooping // react-native-video の repeat={true} に相当
             />
             <View style={thisStyles.overlay}>
                 <Text style={thisStyles.overlayText}>待機中...</Text>
