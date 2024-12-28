@@ -1,19 +1,3 @@
-require("dotenv").config({ path: "./.env" });
-const { setupServer } = require("./server");
-const app = setupServer();
-
-const PORT = process.env.PORT;
-
-app.listen(PORT, () => {
-  console.log(`Server running on: https://localhost:${PORT}/`);
-
-})
-
-//サーバー起動はここまで。
-//---------------------------------
-//以下、エンドポイントはserver.jsで定義した方がよさそうです。
-
-
 const express = require("express");
 // const app = express();
 const knex = require("../knex.js");
@@ -42,7 +26,14 @@ app.post("/api/users/locations", async (req, res) => {
     res.status(500).json({ error: "Failed to insert location" });
   }
 
+const PORT = process.env.PORT;
+const HOST = process.env.DB_HOST
+
 })
+app.listen(PORT, () => {
+  console.log(`Server running on: https://${HOST}:${PORT}/`);
+
+});
 
 // userId(uuid)を保存
 app.post("/api/uuid", (req, res) => {
@@ -66,6 +57,9 @@ app.get("/", (req, res) => {
 // app.listen(3000, () => {
 //   console.log(`Server listening on: http://localhost:${3000}/`);
 // });
+app.listen(3000, () => {
+  console.log(`Server listening on: http://localhost:${3000}/`)
+})})
 
 // require("dotenv").config({ path: "./.env" });
 //
