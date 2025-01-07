@@ -14,3 +14,6 @@ export const isJamAtom = atom<boolean>(false);
 
 //会話するかどうか（ユーザーが選択）
 export const isTalkAtom = atom<boolean>(false);
+
+//ルーム内の人数
+export const roomInNumberOfPeopleAtom = atom<number>(1)
