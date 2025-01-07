@@ -45,6 +45,11 @@ export default function HomeScreen()  {
           setScreen('sec4')
         }
         break;
+      case 'sec4':
+        if(!isTalk){
+          setScreen('sec1')
+        }
+        break;
     }
   }, [screen, isTalk]);
 
