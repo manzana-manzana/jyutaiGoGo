@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const express = require("express");
 // const app = express();
 const knex = require("../knex.js");
@@ -72,3 +73,14 @@ app.listen(3000, () => {
 // app.listen(PORT, () => {
 //   console.log(`Server running on: http://localhost:${PORT}/`);
 // });
+=======
+require("dotenv").config({ path: "./.env" });
+const { setupServer } = require("./server");
+const app = setupServer();
+
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
+  console.log(`Server running on: http://192.168.11.5:${PORT}`);
+});
+>>>>>>> origin/location_1217
