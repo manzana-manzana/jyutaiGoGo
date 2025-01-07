@@ -93,17 +93,18 @@ export default function Sec1_Wait()  {
             />
             <View style={thisStyles.overlay}>
                 <Text style={thisStyles.overlayText}>待機中...</Text>
-                <Text style={[thisStyles.overlayText,{top:'50%',fontSize: 20}]}>jam: {String(isJam)}/ rec: {String(isReording)}</Text>
+                {/*<Text style={[thisStyles.overlayText,{top:'50%',fontSize: 20}]}>jam: {String(isJam)}/ rec: {String(isReording)}</Text>*/}
                 <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
                         color="pink" accessibilityLabel="button"/>
             </View>
             {/*<View style={thisStyles.jamText}>*/}
-                <View style={[thisStyles.jamText, { opacity: isJam ? 1:0 }]}>
-                    <Text style={[styles.text,{fontSize:moderateScale(17), fontWeight:'normal'}]}>
+                <View style={[thisStyles.jamArea, { opacity: isJam ? 1:0 }]}>
+                    <View style={thisStyles.jamArea2}>
+                    <Text style={thisStyles.jamText1}>
                         渋滞に入りました。{"\n"}
-                        周囲の人と会話ができます。
+                        周囲の人と会話ができます。{"\n"}
                     </Text>
-                    <Text style={[styles.text,{fontSize:moderateScale(25), fontWeight:'bold'}]}>会話に参加しますか？</Text>
+                    <Text style={thisStyles.jamText2}>会話に参加しますか？</Text>
                 </View>
                 <Text style={[thisStyles.overlayText,
                     {top:'60%', fontSize:moderateScale(30), color:'red',  opacity: isReording ? 1:0 , backgroundColor:"pink"}]}>音声認識中</Text>
@@ -113,7 +114,7 @@ export default function Sec1_Wait()  {
                     認識した音声：{"\n"}
                     {recordingText}
                 </Text>
-
+                </View>
         </View>
     );
 };
@@ -132,29 +133,41 @@ const thisStyles = StyleSheet.create({
 
     overlayText: {
         position: 'absolute',
-        top: '20%',
-        width:200,
-        color: 'gray',
-        fontSize: moderateScale(50),
+        top: '19%',
+        color: '#2B2B2B',
+        fontSize: moderateScale(40),
+        fontFamily: 'BIZ UDPGothic',
         fontWeight: 'bold',
         textAlign: 'center',
     },
 
-    jamText: {
+    jamArea: {
         position: 'absolute',
-        justifyContent: 'center',
+        // justifyContent: 'space-between',
         alignItems: 'center',
-        gap:20,
-        top: '40%',
-        width:'80%',
-        height:150,
-        color: 'white',
-        fontSize: moderateScale(50),
+        justifyContent: "center",
+        top: '36%',
+        width:'95%',
+        height: '17%',
         fontWeight: 'bold',
         textAlign: 'center',
         backgroundColor: 'white',
-        borderRadius:10
+        borderRadius:10,
 
+    },
+    jamArea2:{
+        justifyContent: 'center',
+    },
+    jamText1: {
+        fontSize: moderateScale(26),
+        fontFamily: 'BIZ UDPGothic',
+        textAlign: 'center',
+    },
+    jamText2: {
+        fontSize: moderateScale(30),
+        fontWeight: 'bold',
+        fontFamily: 'BIZ UDPGothic',
+        textAlign: 'center',
     },
 
 });

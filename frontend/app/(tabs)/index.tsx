@@ -23,30 +23,30 @@ export default function HomeScreen()  {
   const [screen, setScreen] = useAtom(screenAtom)
   const [isTalk, setIsTalk] = useAtom(isTalkAtom)
 
-  // useEffect(() => {
-  //   switch (screen){
-  //     case 'sec0_1':
-  //       setTimeout(() => {
-  //         setScreen('sec0_2')
-  //       }, 3000);
-  //     break;
-  //     case 'sec0_2':
-  //       setTimeout(() => {
-  //         setScreen('sec0_3')
-  //       }, 2000);
-  //       break;
-  //     case 'sec0_3':
-  //       setTimeout(() => {
-  //         setScreen('sec1')
-  //       }, 5000);
-  //       break;
-  //     case 'sec1':
-  //       if(isTalk){
-  //         setScreen('sec4')
-  //       }
-  //       break;
-  //   }
-  // }, [screen, isTalk]);
+  useEffect(() => {
+    switch (screen){
+      case 'sec0_1':
+        setTimeout(() => {
+          setScreen('sec0_2')
+        }, 3000);
+      break;
+      case 'sec0_2':
+        setTimeout(() => {
+          setScreen('sec0_3')
+        }, 2000);
+        break;
+      case 'sec0_3':
+        setTimeout(() => {
+          setScreen('sec1')
+        }, 5000);
+        break;
+      case 'sec1':
+        if(isTalk){
+          setScreen('sec4')
+        }
+        break;
+    }
+  }, [screen, isTalk]);
 
   return (
       <View style={styles.container}>

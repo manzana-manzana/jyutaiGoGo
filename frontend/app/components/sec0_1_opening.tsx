@@ -17,14 +17,14 @@ export default function Sec0_1_Opening()  {
             本アプリを走行しながら{"\n"}
             操作することはお控えください。{"\n"}
             ながら運転は道路交通法により{"\n"}
-            禁止されています。google
+            禁止されています。
             </Text>
             {/*{fontFamily:NotoSansJP_700Bold},*/}
             <Text style={[{fontFamily:'NotoSansJP_700Bold'}, thisStyles.text]}>
             イヤホンの使用はお控えください。{"\n"}
             道路交通法70条に定められた{"\n"}
             安全運転の義務に違反する{"\n"}
-            可能性があります。google
+            可能性があります。
             </Text>
         </View>
         </View>
