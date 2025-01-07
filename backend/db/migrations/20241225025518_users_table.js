@@ -4,8 +4,8 @@
  */
 exports.up = async function (knex) {
   await knex.schema.createTable("users", (table) => {
-    table.uuid("id").primary(); // ランダムに一意のidを生成する
-    table.string("name").nullable();
+    table.increments("id");
+    table.uuid("uuid").primary();
     table.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };
