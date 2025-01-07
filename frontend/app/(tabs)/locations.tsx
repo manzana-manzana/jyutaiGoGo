@@ -23,78 +23,41 @@ export default function App() {
         {
           accuracy: Location.Accuracy.High,
           distanceInterval: 1, // 1m動いたら更新
-          timeInterval: 5000, // 0.5秒で更新
+          timeInterval: 500, // 0.5秒で更新
         },
         async (loc) => {
           setLocation(loc);
         },
       );
 
-      console.log("subの中身:", sub);
-      // 継続取得開始？
+      // 継続取得開始
       setSubscription(sub);
-      if (subscription) {
-        console.log("🐸start watching", subscription);
-      } else {
-        console.log("失敗", subscription);
-      }
-
-      // // 現在地を取得
-      // let currentLocation: any = await Location.getCurrentPositionAsync({});
-      // setLocation(currentLocation);
-
-      // // バックエンドに送る
-      // await fetch('/api/users/locations', {
-      //     method: 'POST',
-      //     headers: {
-      //         'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify(location),
-      // });
     })();
   }, []);
 
   useEffect(() => {
     const insertLocation = async () => {
       // バックエンドに送る
-      console.log("backend送信中...");
-      await fetch("/api/users/locations", {
+      console.log(new Date().toLocaleString());
+      console.log("👽location監視のuseEffect");
+
+      await fetch("http://192.168.11.5:8080/api/users/locations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(location),
+        body: JSON.stringify({
+          user_id: "user_5000", // userIdを入れるようにする
+          location: {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          },
+        }),
       });
     };
     insertLocation();
-  }, [subscription, location]);
-
-  // const startWatching = async () => {
-  //     if (!subscription) {
-  //         console.log("🐸start watching");
-  //         const sub: any = await Location.watchPositionAsync(
-  //             {
-  //                 accuracy: Location.Accuracy.High,
-  //                 distanceInterval: 1, // 1m動いたら更新
-  //                 timeInterval: 5000, // 0.5秒で更新
-  //             },
-  //             async (loc) => {
-  //                 setLocation(loc);
-  //
-  //                 console.log("latitude:", location.coords.latitude, " longitude:", location.coords.longitude);
-  //                 // バックエンドに送る
-  //                 await fetch('/api/users/locations', {
-  //                     method: 'POST',
-  //                     headers: {
-  //                         'Content-Type': 'application/json',
-  //                     },
-  //                     body: JSON.stringify(location),
-  //                 });
-  //             }
-  //         );
-  //         setSubscription(sub);
-  //     }
-  // };
+  }, [location]);
+  // }, [subscription, location]);
 
   const stopWatching = () => {
     if (subscription) {
@@ -104,17 +67,6 @@ export default function App() {
       console.log("subscription: ", subscription);
       console.log("🐙stop watching");
     }
-  };
-
-  const backend_test = async () => {
-    console.log("backend tasting");
-    await fetch("http://192.168.11.5:8080/api/users/locations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(location),
-    });
   };
 
   let text = "位置情報を取得しています...";
@@ -134,7 +86,6 @@ export default function App() {
       ) : (
         <>
           <Button title="継続取得停止" onPress={stopWatching} />
-          <Button title="backend_test" onPress={backend_test} />
         </>
       )}
     </View>

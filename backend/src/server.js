@@ -30,8 +30,8 @@ function setupServer() {
 
   //expo-location-ここから-----------------------------------------------
   app.post("/api/users/locations", async (req, res) => {
-    console.log("★★★ 受け取った request.body:", req.body);
     const { user_id, location } = req.body;
+
     if (!req.body || !user_id || !location) {
       return res.status(400).json({ error: "Invalid request data" });
     }
@@ -41,6 +41,9 @@ function setupServer() {
       latitude: location.latitude,
       longitude: location.longitude,
     };
+
+    console.log(new Date().toLocaleString());
+    console.log("🐣 insertData", insertData);
 
     try {
       await knex("locations").insert(insertData);
