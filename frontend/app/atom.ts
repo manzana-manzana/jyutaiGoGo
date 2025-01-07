@@ -7,7 +7,7 @@ export const uriAtom = atom<any>(null);
 export const apiAddressAtom = atom<string>(`http://192.168.11.5:8080`);
 
 //表示screen
-export const screenAtom = atom<string>("sec0_1");
+export const screenAtom = atom<string>("sec0_2");
 
 //渋滞に入ったかどうか（位置情報から設定）
 export const isJamAtom = atom<boolean>(false);
