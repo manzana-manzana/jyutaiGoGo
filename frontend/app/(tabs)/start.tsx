@@ -4,21 +4,31 @@ import {
     SafeAreaView,
     ScrollView,
     StyleSheet,
-    Text,
+    Text, TouchableHighlight,
     View,
 } from 'react-native';
 import { PermissionsAndroid, Platform, Image } from 'react-native';
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
 import {isJamAtom, isTalkAtom, screenAtom} from "@/app/atom";
+// import Svg, { Rect, LinearGradient, Stop } from 'react-native-svg'; // SvgとLinearGradient、Stopをインポート
 
-export default function Start()  {
+
+// import { LinearGradient } from 'expo-linear-gradient';
+
+export default function Start(props: {
+    colors: string[];
+    text: string;
+    useBorderGradient?: boolean;
+    useInnerGradient?: boolean;
+})  {
     const [screen, setScreen] = useAtom(screenAtom)
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const setIsJam = useSetAtom(isJamAtom)
 
-
     return (
         <View style={{marginTop:50}}>
+
+
             <Text>{screen}</Text>
             <Button title='最初に戻る/　ここをクリック後、手動でHomeへGO' onPress={()=>{
                 setScreen('sec0_1')
@@ -41,4 +51,11 @@ const getPermission = async () => {
     }
 };
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
 
