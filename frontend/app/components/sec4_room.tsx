@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions} from 'react-native';
 import {styles} from "@/app/style";
 // import {moderateScale} from "react-native-size-matters";
 import Metrics from './metrics'
@@ -7,6 +7,7 @@ const {horizontalScale, verticalScale, moderateScale} = Metrics
 import {isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
 import {useAtomValue} from "jotai";
 import {useAtom} from "jotai/index";
+// import Animated from "react-native-reanimated";
 
 
 export default function Sec4_Room()  {
@@ -15,6 +16,41 @@ export default function Sec4_Room()  {
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
+    const { width, height } = Dimensions.get('window');
+
+    // 初期の位置を右上に設定
+    const [position,setPosition] = useState({
+        top: new Animated.Value(verticalScale(28)),
+        left: new Animated.Value(horizontalScale(100)),
+    });
+
+    useEffect(() => {
+        // setPosition({
+        //     top: new Animated.Value(verticalScale(28)),
+        //     left: new Animated.Value(horizontalScale(100)),
+        // })
+        // 右上から左下に動かすアニメーション
+        Animated.timing(position.left, {
+            toValue: horizontalScale(11),
+            duration: 2000,
+            useNativeDriver: false,
+        }).start();
+
+        Animated.timing(position.top, {
+            toValue: verticalScale(51),
+            duration: 2000,
+            useNativeDriver: false,
+        }).start();
+    }, []);
+
+    // const fadeAnim = new Animated.Value(0)
+    // useEffect(() => {
+    //     Animated.timing(fadeAnim,{
+    //         toValue: 1,
+    //         duration: 1000,
+    //         useNativeDriver: true,
+    //     }).start()
+    // }, []);
 
     const startExit = ()=>{
         if(!isExit){
@@ -53,6 +89,33 @@ export default function Sec4_Room()  {
                 <Text style={thisStyles.countText1}>まもなくルームから退出します</Text>
                 <Text style={thisStyles.countText2}>{count}</Text>
             </View>
+            {/*<Animated.View style={{*/}
+            {/*    opacity: fadeAnim,*/}
+            {/*    position: 'absolute',*/}
+            {/*    top:100}}>*/}
+            {/*    <Image style={{width:106}}*/}
+            {/*           resizeMode='contain'*/}
+            {/*           source={require('../../assets/images/cars/car1_0.png')}/>*/}
+            {/*</Animated.View>*/}
+            {/*<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>*/}
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        top: position.top, // topの位置をアニメーションで変更
+                        left: position.left, // leftの位置をアニメーションで変更
+                        // width: 100,
+                        // height: 100,
+                        // backgroundColor: 'tomato',
+
+                    }}
+                >
+                        <Image style={{width:106}}
+                               resizeMode='contain'
+                               source={require('../../assets/images/cars/car1_0.png')}/>
+                </Animated.View>
+
+            {/*</View>*/}
+
         </View>
     );
 };
