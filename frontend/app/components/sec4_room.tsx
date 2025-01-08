@@ -32,7 +32,7 @@ export default function Sec4_Room()  {
     // アニメーションを順番に実行するための関数
     const moveImagesSequentially = () => {
         const animations = positions.map((position, index) => {
-            return Animated.sequence([
+            return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(Number.isInteger(index/2)?
                         Math.floor(10 + Math.floor(index/2) * 21.5): Math.floor(22+ Math.floor(index/2) * 21.5)),
@@ -98,10 +98,7 @@ export default function Sec4_Room()  {
                 <Text style={thisStyles.peopleText2}>{roomInNumberOfPeople}</Text>
                 <Text style={thisStyles.peopleText3}>名</Text>
             </View>
-            <View style={[thisStyles.countArea,{opacity: isExit ? 1:0 }]}>
-                <Text style={thisStyles.countText1}>まもなくルームから退出します</Text>
-                <Text style={thisStyles.countText2}>{count}</Text>
-            </View>
+
 
             {positions.map((position, index) => (
                 <Animated.View
@@ -124,6 +121,10 @@ export default function Sec4_Room()  {
                 </Animated.View>
             ))}
 
+            <View style={[thisStyles.countArea,{opacity: isExit ? 1:0 }]}>
+                <Text style={thisStyles.countText1}>まもなくルームから退出します</Text>
+                <Text style={thisStyles.countText2}>{count}</Text>
+            </View>
             {/*<Animated.View style={{*/}
             {/*    opacity: fadeAnim,*/}
             {/*    position: 'absolute',*/}
