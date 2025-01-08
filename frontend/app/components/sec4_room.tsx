@@ -7,7 +7,9 @@ const {horizontalScale, verticalScale, moderateScale} = Metrics
 import {isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
 import {useAtomValue} from "jotai";
 import {useAtom} from "jotai/index";
+// import LinearGradient from 'react-native-linear-gradient';
 // import Animated from "react-native-reanimated";
+
 
 const carImages = {
     c1_0:require(`../../assets/images/cars/car1_0.png`),
@@ -98,7 +100,9 @@ export default function Sec4_Room()  {
     useEffect(() => {
             placeMultipleCars()
             moveImagesSequentially();
-            setTimeout(()=>{setIsRoom(true)},(roomInNumberOfPeople + 1) * 1000)
+            setTimeout(()=>{
+                setIsRoom(true)}
+                ,(roomInNumberOfPeople + 1) * 1000)
 
             console.log('is--end-', isRoom)
 
@@ -108,7 +112,7 @@ export default function Sec4_Room()  {
     const startExit = ()=>{
         if(!isExit){
             setIsExit(true)
-            let countNum=11
+            let countNum=2
             const countDownTimer = setInterval(()=>{
                 if(countNum<=1){
                     setIsExit(false)
@@ -132,15 +136,36 @@ export default function Sec4_Room()  {
             <Image style={{width: '100%', height:'100%'}}
                    resizeMode='contain'
                    source={require('../../assets/images/sec4_room.png')}/>
-            <Pressable style={thisStyles.button} onPress={startExit} >
-                <Text style={thisStyles.buttonText}>退出</Text>
-            </Pressable>
-            <View style={thisStyles.peopleArea}>
-                <Text style={thisStyles.peopleText1}>現在</Text>
-                <Text style={thisStyles.peopleText2}>{roomInNumberOfPeople}</Text>
-                <Text style={thisStyles.peopleText3}>名</Text>
+
+            <View style={[{opacity: isRoom ? 1:0},thisStyles.main]}>
+                <Pressable style={thisStyles.button} onPress={startExit} >
+                    <Text style={thisStyles.buttonText}>退出</Text>
+                </Pressable>
+                <View style={thisStyles.peopleArea}>
+                    <Text style={thisStyles.peopleText1}>現在</Text>
+                    <Text style={thisStyles.peopleText2}>{roomInNumberOfPeople}</Text>
+                    <Text style={thisStyles.peopleText3}>名</Text>
+                </View>
             </View>
 
+            <View style={[{opacity: isRoom ?0:1},thisStyles.main]}>
+                <View style={thisStyles.waitArea}>
+
+                    <Text style={thisStyles.waitText1}>読み込み中</Text>
+                </View>
+                <View style={thisStyles.waitArea2}></View>
+
+                <Image
+                    source={carImages[`c6_0`]}
+                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(59), left: horizontalScale(-14)}}
+                    resizeMode='contain'
+                />
+                    <Image
+                        source={carImages[`c7_0`]}
+                        style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(65), left: horizontalScale(-1)}}
+                        resizeMode='contain'
+                    />
+            </View>
 
             {positions.map((position, index) => (
                 <Animated.View
@@ -155,7 +180,7 @@ export default function Sec4_Room()  {
                     <Image
                         // source={require(`../../assets/images/cars/car8_1.png`)}
                         source={carImages[`${carFileArray[index]}${!isRoom || index===myNum ? 1 : 0}`]}
-                        style={{ width: 106 }}
+                        style={{ width: horizontalScale(27) }}
                         resizeMode='contain'
                     />
                 </Animated.View>
@@ -171,6 +196,14 @@ export default function Sec4_Room()  {
 };
 
 const thisStyles = StyleSheet.create({
+    main:{
+        position:'absolute',
+        top:0,
+        left:0,
+        width:'100%',
+        height:'100%',
+        alignItems:'center'
+    },
     button: {
         position: 'absolute',
         top: verticalScale(75),//あとで再計算
@@ -179,7 +212,7 @@ const thisStyles = StyleSheet.create({
         borderRadius: 40,
         backgroundColor:'#737373',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     buttonText:{
         fontWeight: 'bold',
@@ -248,5 +281,34 @@ const thisStyles = StyleSheet.create({
         fontFamily: 'BIZ UDPGothic',
         color:'black',
     },
-
+    waitArea: {
+        position: 'absolute',
+        top: 0,
+        left:0,
+        width: '100%',
+        height: verticalScale(36),
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
+        // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
+        alignItems:'center'
+    },
+    waitArea2: {
+        position: 'absolute',
+        top: verticalScale(36),
+        left:0,
+        width: '100%',
+        height: verticalScale(1),
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
+        // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
+        alignItems:'center'
+    },
+    waitText1: {
+        fontWeight: 'bold',
+        fontSize: moderateScale(40),
+        fontFamily: 'BIZ UDPGothic',
+        color:'#2B2B2B',
+        position:'absolute',
+        top:verticalScale(19)
+    },
 })
