@@ -92,6 +92,11 @@ function setupServer() {
     res.status(200).send("Hello World!");
   });
 
+  app.get("/test", (req, res) => {
+    console.log("hello world");
+    res.status(200).send("Test中です。");
+  });
+
   return app;
 }
 

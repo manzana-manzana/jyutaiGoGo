@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { useAtom, useAtomValue } from "jotai";
 import { usersAtom, groupsAtom, locationAtom } from "./../atom";
+import { BASE_URL } from "@/config";
 
 // ユーザーデータ型定義
 type User = {
@@ -20,12 +21,11 @@ export default function GroupUsersByLocation() {
   const location = useAtomValue(locationAtom);
 
   useEffect(() => {
-    // 仮のデータ（バックエンドから取得する想定）
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://192.168.11.5:8080/api/users");
+        const response = await fetch(`${BASE_URL}/api/users`);
         if (!response.ok) {
-          throw new Error(`APIリクエストに失敗しました: ${response.status}`);
+          console.error(`APIリクエストに失敗しました: ${response.status}`);
         }
         const data: User[] = await response.json();
         setUsers(data);
@@ -34,7 +34,13 @@ export default function GroupUsersByLocation() {
       }
     };
 
-    fetchUsers();
+    (async () => {
+      try {
+        await fetchUsers();
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, [location]);
 
   useEffect(() => {

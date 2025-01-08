@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import GroupUsersByLocation from "./../components/GroupUsersByLocation";
 import { useAtom } from "jotai";
 import { locationAtom, clientIdAtom } from "./../atom";
+import { BASE_URL } from "@/config";
 
 export default function App() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -50,9 +51,7 @@ export default function App() {
           console.log("既存の Client ID:", storedId);
         } else {
           // サーバーから新しい ID を取得
-          const response = await fetch(
-            "http://192.168.11.5:8080/api/assign-id",
-          );
+          const response = await fetch(`${BASE_URL}/api/assign-id`);
           const data = await response.json();
           const newClientId = data.clientId;
 
@@ -66,17 +65,25 @@ export default function App() {
       }
     };
 
-    fetchOrGenerateClientId();
+    (async () => {
+      try {
+        await fetchOrGenerateClientId();
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, []);
 
   useEffect(() => {
+    if (!location) return;
+
     const insertLocation = async () => {
       console.log(new Date().toLocaleString());
       console.log("👽location監視のuseEffect");
       console.log("✅ clientId:", clientId);
 
       // バックエンドにデータを送信
-      await fetch("http://192.168.11.5:8080/api/users/locations", {
+      await fetch(`${BASE_URL}/api/users/locations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +108,13 @@ export default function App() {
         });
     };
 
-    insertLocation();
+    (async () => {
+      try {
+        await insertLocation();
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, [location, clientId]); // clientId を依存配列に追加
 
   const stopWatching = () => {
