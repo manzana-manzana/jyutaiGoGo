@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { View, Text } from "react-native";
+import { useAtom, useAtomValue } from "jotai";
+import { usersAtom, groupsAtom, locationAtom } from "./../atom";
 
 // ユーザーデータ型定義
 type User = {
@@ -13,8 +15,9 @@ type Groups = {
 };
 
 export default function GroupUsersByLocation() {
-  const [users, setUsers] = useState<User[]>([]); // ユーザー情報リスト
-  const [groups, setGroups] = useState<Groups>({}); // グループ化されたデータ
+  const [users, setUsers] = useAtom(usersAtom);
+  const [groups, setGroups] = useAtom(groupsAtom);
+  const location = useAtomValue(locationAtom);
 
   useEffect(() => {
     // 仮のデータ（バックエンドから取得する想定）
@@ -32,7 +35,7 @@ export default function GroupUsersByLocation() {
     };
 
     fetchUsers();
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     // グループ分けロジック
