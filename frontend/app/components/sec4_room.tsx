@@ -18,29 +18,39 @@ export default function Sec4_Room()  {
     const [isExit, setIsExit]= useState(false)
     const { width, height } = Dimensions.get('window');
 
-    // 初期の位置を右上に設定
-    const [position,setPosition] = useState({
-        top: new Animated.Value(verticalScale(28)),
-        left: new Animated.Value(horizontalScale(100)),
-    });
+    // 初期位置
+    const [positions, setPositions] = useState(
+        new Array(6).fill(0).map((value,index) => ({
+            top: new Animated.Value(Number.isInteger(index/2)?verticalScale(28):verticalScale(38)),
+            left: new Animated.Value(Number.isInteger(index/2)?horizontalScale(100):horizontalScale(100)),
+        }))
+    );
+
+    // アニメーションを順番に実行するための関数
+    const moveImagesSequentially = () => {
+        const animations = positions.map((position, index) => {
+            return Animated.sequence([
+                Animated.timing(position.left, {
+                    toValue: horizontalScale(Number.isInteger(index/2)?
+                        Math.floor(10 + Math.floor(index/2) * 21.5): Math.floor(22+ Math.floor(index/2) * 21.5)),
+                    duration: 1000,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(position.top, {
+                    toValue: verticalScale(Number.isInteger(index/2)?
+                        Math.floor(52 - Math.floor(index/2) * 5.5): Math.floor(59 - Math.floor(index/2) * 5.5)),
+                    duration: 1000,
+                    useNativeDriver: false,
+                })
+            ]);
+        });
+
+        // すべてのアニメーションを順番に実行
+        Animated.stagger(1000, animations).start(); // 1秒ごとに次の画像が動く
+    };
 
     useEffect(() => {
-        // setPosition({
-        //     top: new Animated.Value(verticalScale(28)),
-        //     left: new Animated.Value(horizontalScale(100)),
-        // })
-        // 右上から左下に動かすアニメーション
-        Animated.timing(position.left, {
-            toValue: horizontalScale(11),
-            duration: 2000,
-            useNativeDriver: false,
-        }).start();
-
-        Animated.timing(position.top, {
-            toValue: verticalScale(51),
-            duration: 2000,
-            useNativeDriver: false,
-        }).start();
+        moveImagesSequentially(); // アニメーション開始
     }, []);
 
     // const fadeAnim = new Animated.Value(0)
@@ -89,6 +99,27 @@ export default function Sec4_Room()  {
                 <Text style={thisStyles.countText1}>まもなくルームから退出します</Text>
                 <Text style={thisStyles.countText2}>{count}</Text>
             </View>
+
+            {positions.map((position, index) => (
+                <Animated.View
+                    key={index}
+                    style={{
+                        position: 'absolute',
+                        top: position.top,
+                        left: position.left,
+                        // width: 100,
+                        // height: 100,
+                    }}
+                >
+                    <Image
+                        source={require('../../assets/images/cars/car1_1.png')}
+                        // image=${index + 1}` }} // 画像のソース（適宜変更）
+                        style={{ width: 106 }}
+                        resizeMode='contain'
+                    />
+                </Animated.View>
+            ))}
+
             {/*<Animated.View style={{*/}
             {/*    opacity: fadeAnim,*/}
             {/*    position: 'absolute',*/}
@@ -97,24 +128,19 @@ export default function Sec4_Room()  {
             {/*           resizeMode='contain'*/}
             {/*           source={require('../../assets/images/cars/car1_0.png')}/>*/}
             {/*</Animated.View>*/}
-            {/*<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>*/}
-                <Animated.View
-                    style={{
-                        position: 'absolute',
-                        top: position.top, // topの位置をアニメーションで変更
-                        left: position.left, // leftの位置をアニメーションで変更
-                        // width: 100,
-                        // height: 100,
-                        // backgroundColor: 'tomato',
 
-                    }}
-                >
-                        <Image style={{width:106}}
-                               resizeMode='contain'
-                               source={require('../../assets/images/cars/car1_0.png')}/>
-                </Animated.View>
+            {/*<Animated.View*/}
+            {/*    style={{*/}
+            {/*        position: 'absolute',*/}
+            {/*        top: position.top, // topの位置をアニメーションで変更*/}
+            {/*        left: position.left, // leftの位置をアニメーションで変更*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <Image style={{width:106}}*/}
+            {/*           resizeMode='contain'*/}
+            {/*           source={require('../../assets/images/cars/car1_0.png')}/>*/}
+            {/*</Animated.View>*/}
 
-            {/*</View>*/}
 
         </View>
     );
