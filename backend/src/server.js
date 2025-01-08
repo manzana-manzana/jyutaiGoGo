@@ -3,6 +3,7 @@ const amiVoiceController = require("../controllers/amivoice.js");
 const multer = require("multer");
 const cors = require("cors");
 const knex = require("../knex");
+const { v4: uuidV4 } = require("uuid");
 
 function setupServer() {
   const app = express();
@@ -29,15 +30,20 @@ function setupServer() {
   });
 
   //expo-location-ここから-----------------------------------------------
-  app.post("/api/users/locations", async (req, res) => {
-    const { user_id, location } = req.body;
+  app.get("/api/assign-id", async (req, res) => {
+    const clientId = uuidV4();
+    res.json({ clientId });
+  });
 
-    if (!req.body || !user_id || !location) {
+  app.post("/api/users/locations", async (req, res) => {
+    const { uuid, location } = req.body;
+
+    if (!req.body || !uuid || !location) {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
     const insertData = {
-      user_id: req.body.user_id,
+      uuid: req.body.uuid,
       latitude: location.latitude,
       longitude: location.longitude,
     };
@@ -54,16 +60,19 @@ function setupServer() {
     }
   });
 
-  // userId(uuid)を保存。今はまだ使っていないです。
-  app.post("/api/uuid", (req, res) => {
-    const userId = req.body.userId;
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+  app.get("/api/users", async (req, res) => {
+    try {
+      const latestLocations = await knex("locations")
+        .select("uuid", "latitude", "longitude", "created_at")
+        .orderBy("uuid") // uuidでソート
+        .orderBy("created_at", "desc") // uuidごとに最新のデータを優先
+        .distinctOn("uuid"); // uuidごとに一意なデータを取得
+
+      res.status(200).json(latestLocations); // JSONでクライアントに送信
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      res.status(500).json({ error: "サーバーでエラーが発生しました。" });
     }
-
-    knex("users").insert({ uuid: userId, name: req.body.name });
-
-    res.status(200).json({ message: "Success" });
   });
 
   app.get("/", (req, res) => {

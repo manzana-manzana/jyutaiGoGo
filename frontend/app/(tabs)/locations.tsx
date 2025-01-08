@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import * as Location from "expo-location";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import GroupUsersByLocation from "./../components/GroupUsersByLocation";
 
 export default function App() {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<any>(null);
+  const [clientId, setClientId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       console.log("初回レンダリング");
 
       // 位置情報のリクエスト
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("位置情報へのアクセスが拒否されました。");
         return;
@@ -36,28 +39,68 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const fetchOrGenerateClientId = async () => {
+      try {
+        // AsyncStorage に保存済みの ID を取得
+        const storedId = await AsyncStorage.getItem("clientId");
+        if (storedId) {
+          setClientId(storedId);
+          console.log("既存の Client ID:", storedId);
+        } else {
+          // サーバーから新しい ID を取得
+          const response = await fetch(
+            "http://192.168.11.5:8080/api/assign-id",
+          );
+          const data = await response.json();
+          const newClientId = data.clientId;
+
+          // ID を AsyncStorage に保存
+          await AsyncStorage.setItem("clientId", newClientId);
+          setClientId(newClientId);
+          console.log("新しい Client ID:", newClientId);
+        }
+      } catch (error) {
+        console.error("Client ID の取得中にエラーが発生:", error);
+      }
+    };
+
+    fetchOrGenerateClientId();
+  }, []);
+
+  useEffect(() => {
     const insertLocation = async () => {
-      // バックエンドに送る
       console.log(new Date().toLocaleString());
       console.log("👽location監視のuseEffect");
+      console.log("✅ clientId:", clientId);
 
+      // バックエンドにデータを送信
       await fetch("http://192.168.11.5:8080/api/users/locations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: "user_5000", // userIdを入れるようにする
+          uuid: clientId,
           location: {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           },
         }),
-      });
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("📍 location データ送信成功");
+          } else {
+            console.error("🚨 location データ送信失敗:", response.status);
+          }
+        })
+        .catch((error) => {
+          console.error("🚨 location データ送信中にエラーが発生:", error);
+        });
     };
+
     insertLocation();
-  }, [location]);
-  // }, [subscription, location]);
+  }, [location, clientId]); // clientId を依存配列に追加
 
   const stopWatching = () => {
     if (subscription) {
@@ -66,6 +109,18 @@ export default function App() {
 
       console.log("subscription: ", subscription);
       console.log("🐙stop watching");
+    }
+  };
+
+  // 検証用のuuid削除関数
+  const resetClientId = async () => {
+    try {
+      // 保存されている UUID を削除
+      await AsyncStorage.removeItem("clientId");
+      setClientId(null);
+      console.log("Client ID をリセットしました");
+    } catch (error) {
+      console.error("Client ID リセット中にエラーが発生:", error);
     }
   };
 
@@ -79,6 +134,8 @@ export default function App() {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <GroupUsersByLocation />
+
       <Text style={{ color: "green" }}>{text}</Text>
       {!subscription ? (
         // <Button title="継続取得開始" onPress={startWatching} />
@@ -86,6 +143,10 @@ export default function App() {
       ) : (
         <>
           <Button title="継続取得停止" onPress={stopWatching} />
+          <Text style={{ color: "green" }}>
+            Client ID: {clientId || "取得中..."}
+          </Text>
+          <Button title="AsyncStorageのuuid削除" onPress={resetClientId} />
         </>
       )}
     </View>
