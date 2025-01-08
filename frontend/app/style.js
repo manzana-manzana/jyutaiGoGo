@@ -19,7 +19,7 @@ styles = StyleSheet.create({
     head: {fontSize: 20},
     container: {
         flex: 1,
-        backgroundColor: '#f7f5ef',
+        backgroundColor: '#FDF7E5',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',

@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {styles} from "@/app/style";
-import {moderateScale} from "react-native-size-matters";
+// import {moderateScale} from "react-native-size-matters";
+import Metrics from './metrics'
+const {horizontalScale, verticalScale, moderateScale} = Metrics
 import {isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
 import {useAtomValue} from "jotai";
 import {useAtom} from "jotai/index";
@@ -58,9 +60,9 @@ export default function Sec4_Room()  {
 const thisStyles = StyleSheet.create({
     button: {
         position: 'absolute',
-        top: '75%',//あとで再計算
-        width: '72%',
-        height: '9%',
+        top: verticalScale(75),//あとで再計算
+        width: horizontalScale(72),
+        height: verticalScale(9),
         borderRadius: 40,
         backgroundColor:'#737373',
         justifyContent: 'center',
@@ -76,9 +78,9 @@ const thisStyles = StyleSheet.create({
     peopleArea: {
         position: 'absolute',
         flexDirection: 'row',
-        top: '15%',//あとで再計算
-        width: '50%',
-        height: '11%',
+        top: verticalScale(15),//あとで再計算
+        width: horizontalScale(50),
+        height: verticalScale(11),
     },
     peopleText1: {
         fontWeight: 'bold',
@@ -108,15 +110,15 @@ const thisStyles = StyleSheet.create({
     countArea: {
         position: 'absolute',
         alignItems:'center',
-        top: '30%',//あとで再計算
-        width: '95%',
-        height: '26%',
+        top: verticalScale(30),//あとで再計算
+        width: horizontalScale(95),
+        height: verticalScale(26),
         borderRadius: 10,
         backgroundColor: 'white'
     },
     countText1: {
         position: 'absolute',
-        top: '17%',
+        top: verticalScale(5),//17
         fontWeight: 'bold',
         fontSize: moderateScale(22),
         fontFamily: 'BIZ UDPGothic',
@@ -124,7 +126,7 @@ const thisStyles = StyleSheet.create({
     },
     countText2: {
         position: 'absolute',
-        top: '46%',
+        top: verticalScale(12),//46
         textAlign: 'center',
         width: '100%',
         fontWeight: 'bold',
