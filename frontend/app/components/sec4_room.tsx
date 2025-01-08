@@ -34,15 +34,15 @@ export default function Sec4_Room()  {
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
-    const { width, height } = Dimensions.get('window');
     const [carFileArray, setCarFileArray] = useState([])
-
+    const [myNum, setMyNum]= useState(0)
+    const [isRoom,setIsRoom]= useState(false)
 
     const placeMultipleCars = () => {
 
         const getCarNoArray: number[] = []
         const getCarFileArray: string[] = []
-        const myNum = roomInNumberOfPeople <= 3 ? 2 : 4//ユーザー車位置は参加者3人までなら2、4人以上なら4
+        setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)//ユーザー車位置は参加者3人までなら2、4人以上なら4
 
         for (let i = 1; i <= roomInNumberOfPeople; i++) {
             let carNo = 0
@@ -53,15 +53,13 @@ export default function Sec4_Room()  {
                     getCarNoArray.push(getNo)
                 }
             }
-            const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
+            const carFileName = `c${carNo}_`
+            // const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
             getCarFileArray.push(carFileName)
-            // getCarFileArray.push(require(`../../assets/images/cars/${carFileName}.png`))
-        }
-        // console.log("-getCarFileArray: ",getCarFileArray.length)
-        // console.log("-getCarFileArray: ",getCarFileArray[0])
-        // console.log("image--",carImages.c8_1)
 
-        setCarFileArray(getCarFileArray)
+        }
+        console.log('is--',isRoom)
+　       setCarFileArray(getCarFileArray)
     }
 
     // 初期位置
@@ -75,7 +73,6 @@ export default function Sec4_Room()  {
         }))
     );
 
-    // アニメーションを順番に実行するための関数
     const moveImagesSequentially = () => {
         const animations = positions.map((position, index) => {
             return Animated.parallel([
@@ -94,23 +91,19 @@ export default function Sec4_Room()  {
             ]);
         });
 
-        // すべてのアニメーションを順番に実行
         Animated.stagger(1000, animations).start(); // 1秒ごとに次の画像が動く
+        console.log('is-2-',isRoom)
     };
 
     useEffect(() => {
-        placeMultipleCars()
-        moveImagesSequentially(); // アニメーション開始
+            placeMultipleCars()
+            moveImagesSequentially();
+            setTimeout(()=>{setIsRoom(true)},(roomInNumberOfPeople + 1) * 1000)
+
+            console.log('is--end-', isRoom)
+
     }, []);
 
-    // const fadeAnim = new Animated.Value(0)
-    // useEffect(() => {
-    //     Animated.timing(fadeAnim,{
-    //         toValue: 1,
-    //         duration: 1000,
-    //         useNativeDriver: true,
-    //     }).start()
-    // }, []);
 
     const startExit = ()=>{
         if(!isExit){
@@ -122,6 +115,7 @@ export default function Sec4_Room()  {
                     setCount(10)
                     setIsJam(false)
                     setIsTalk(false)
+                    setIsRoom(false)
                     clearInterval(countDownTimer)
                     console.log("timer_end__")
                 }else{
@@ -132,11 +126,6 @@ export default function Sec4_Room()  {
         }
     }
 
-    // const getCarImage = (index:number) => {
-    //     console.log(carFileArray.length)
-    //     console.log(carFileArray[index])
-    //     return require(`../../assets/images/cars/${carFileArray[index]}.png`);
-    // };
 
     return (
         <View style={styles.container}>
@@ -165,7 +154,7 @@ export default function Sec4_Room()  {
                 >
                     <Image
                         // source={require(`../../assets/images/cars/car8_1.png`)}
-                        source={carImages[carFileArray[index]]}
+                        source={carImages[`${carFileArray[index]}${!isRoom || index===myNum ? 1 : 0}`]}
                         style={{ width: 106 }}
                         resizeMode='contain'
                     />
@@ -176,27 +165,6 @@ export default function Sec4_Room()  {
                 <Text style={thisStyles.countText1}>まもなくルームから退出します</Text>
                 <Text style={thisStyles.countText2}>{count}</Text>
             </View>
-            {/*<Animated.View style={{*/}
-            {/*    opacity: fadeAnim,*/}
-            {/*    position: 'absolute',*/}
-            {/*    top:100}}>*/}
-            {/*    <Image style={{width:106}}*/}
-            {/*           resizeMode='contain'*/}
-            {/*           source={require('../../assets/images/cars/car1_0.png')}/>*/}
-            {/*</Animated.View>*/}
-
-            {/*<Animated.View*/}
-            {/*    style={{*/}
-            {/*        position: 'absolute',*/}
-            {/*        top: position.top, // topの位置をアニメーションで変更*/}
-            {/*        left: position.left, // leftの位置をアニメーションで変更*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    <Image style={{width:106}}*/}
-            {/*           resizeMode='contain'*/}
-            {/*           source={require('../../assets/images/cars/car1_0.png')}/>*/}
-            {/*</Animated.View>*/}
-
 
         </View>
     );
@@ -259,7 +227,8 @@ const thisStyles = StyleSheet.create({
         width: horizontalScale(95),
         height: verticalScale(26),
         borderRadius: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        zIndex:99
     },
     countText1: {
         position: 'absolute',
