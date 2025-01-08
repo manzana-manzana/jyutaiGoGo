@@ -50,6 +50,7 @@
     "react-native-screens": "~4.1.0",
     "react-native-size-matters": "^0.4.2",
     "react-native-sound": "^0.11.2",
+    "react-native-viewport-units": "^0.0.5",
     "react-native-web": "^0.19.13",
     "react-native-webview": "13.12.5"
   },

@@ -1,13 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {
-  Button,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { PermissionsAndroid, Platform, Image } from 'react-native';
+
+import { PermissionsAndroid, Platform, View,Image } from 'react-native';
 import {useAtom, useSetAtom} from "jotai";
 import {isTalkAtom, screenAtom} from "@/app/atom";
 
@@ -22,6 +15,8 @@ import Sec4_Room from "@/app/components/sec4_room";
 export default function HomeScreen()  {
   const [screen, setScreen] = useAtom(screenAtom)
   const [isTalk, setIsTalk] = useAtom(isTalkAtom)
+
+
 
   useEffect(() => {
     switch (screen){

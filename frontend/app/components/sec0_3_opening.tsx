@@ -1,7 +1,9 @@
 import React, { useRef } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
-import { moderateScale } from 'react-native-size-matters';
+// import { moderateScale } from 'react-native-size-matters';
+import Metrics from './metrics'
+const {horizontalScale, verticalScale, moderateScale} = Metrics
 import { styles } from '@/app/style'; // ユーザー独自のスタイルをインポート
 
 export default function Sec0_3_Opening() {
@@ -27,7 +29,7 @@ export default function Sec0_3_Opening() {
 const thisStyles = StyleSheet.create({
     overlayText: {
         position: 'absolute',
-        top: '20%',
+        top: verticalScale(20),
         color: 'blue',
         fontSize: moderateScale(50),
         fontWeight: 'bold',

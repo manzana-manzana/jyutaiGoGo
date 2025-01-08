@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+// import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import Metrics from './metrics'
+const {horizontalScale, verticalScale, moderateScale} = Metrics
 import {styles} from "@/app/style";
 import {useAtom} from "jotai";
 import {apiAddressAtom, isJamAtom, isTalkAtom} from "@/app/atom";
@@ -196,11 +198,13 @@ export default function Sec1_Wait()  {
                 useNativeControls={false} // react-native-video の controls={false} に相当
                 isLooping // react-native-video の repeat={true} に相当
             />
+            <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
+                    color="pink" accessibilityLabel="button"/>
+
             <View style={thisStyles.overlay}>
                 <Text style={thisStyles.overlayText}>待機中...</Text>
                 {/*<Text style={[thisStyles.overlayText,{top:'50%',fontSize: 20}]}>jam: {String(isJam)}/ rec: {String(isReording)}</Text>*/}
-                <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
-                        color="pink" accessibilityLabel="button"/>
+
             </View>
             {/*<View style={thisStyles.jamText}>*/}
                 <View style={[thisStyles.jamArea, { opacity: isJam ? 1:0 }]}>
@@ -227,23 +231,23 @@ export default function Sec1_Wait()  {
 const thisStyles = StyleSheet.create({
     overlay: {
         position: 'absolute',
-        top: '15%',
-        width:200,
-        height:200,
+        top: verticalScale(19),
+        width: '100%',
+        // height:200,
         color: 'gray',
         fontSize: moderateScale(50),
         fontWeight: 'bold',
-        textAlign: 'center',
+        alignItems:'center'
     },
 
     overlayText: {
         position: 'absolute',
-        top: '19%',
+        // top: verticalScale(10),
         color: '#2B2B2B',
         fontSize: moderateScale(40),
         fontFamily: 'BIZ UDPGothic',
         fontWeight: 'bold',
-        textAlign: 'center',
+
     },
 
     jamArea: {
@@ -251,9 +255,9 @@ const thisStyles = StyleSheet.create({
         // justifyContent: 'space-between',
         alignItems: 'center',
         justifyContent: "center",
-        top: '36%',
-        width:'95%',
-        height: '17%',
+        top: verticalScale(36),
+        width: horizontalScale(95),
+        height: verticalScale(17),
         fontWeight: 'bold',
         textAlign: 'center',
         backgroundColor: 'white',
