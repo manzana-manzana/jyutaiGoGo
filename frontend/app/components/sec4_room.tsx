@@ -9,6 +9,24 @@ import {useAtomValue} from "jotai";
 import {useAtom} from "jotai/index";
 // import Animated from "react-native-reanimated";
 
+const carImages = {
+    c1_0:require(`../../assets/images/cars/car1_0.png`),
+    c1_1:require(`../../assets/images/cars/car1_1.png`),
+    c2_0:require(`../../assets/images/cars/car2_0.png`),
+    c2_1:require(`../../assets/images/cars/car2_1.png`),
+    c3_0:require(`../../assets/images/cars/car3_0.png`),
+    c3_1:require(`../../assets/images/cars/car3_1.png`),
+    c4_0:require(`../../assets/images/cars/car4_0.png`),
+    c4_1:require(`../../assets/images/cars/car4_1.png`),
+    c5_0:require(`../../assets/images/cars/car5_0.png`),
+    c5_1:require(`../../assets/images/cars/car5_1.png`),
+    c6_0:require(`../../assets/images/cars/car6_0.png`),
+    c6_1:require(`../../assets/images/cars/car6_1.png`),
+    c7_0:require(`../../assets/images/cars/car7_0.png`),
+    c7_1:require(`../../assets/images/cars/car7_1.png`),
+    c8_0:require(`../../assets/images/cars/car8_0.png`),
+    c8_1:require(`../../assets/images/cars/car8_1.png`),
+}
 
 export default function Sec4_Room()  {
     const roomInNumberOfPeople = useAtomValue(roomInNumberOfPeopleAtom)
@@ -17,15 +35,43 @@ export default function Sec4_Room()  {
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
     const { width, height } = Dimensions.get('window');
+    const [carFileArray, setCarFileArray] = useState([])
+
+
+    const placeMultipleCars = () => {
+
+        const getCarNoArray: number[] = []
+        const getCarFileArray: string[] = []
+        const myNum = roomInNumberOfPeople <= 3 ? 2 : 4//ユーザー車位置は参加者3人までなら2、4人以上なら4
+
+        for (let i = 1; i <= roomInNumberOfPeople; i++) {
+            let carNo = 0
+            while (carNo === 0) {
+                const getNo = Math.floor(Math.random() * 8) + 1;
+                if (!getCarNoArray.includes(getNo)) {
+                    carNo = getNo
+                    getCarNoArray.push(getNo)
+                }
+            }
+            const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
+            getCarFileArray.push(carFileName)
+            // getCarFileArray.push(require(`../../assets/images/cars/${carFileName}.png`))
+        }
+        // console.log("-getCarFileArray: ",getCarFileArray.length)
+        // console.log("-getCarFileArray: ",getCarFileArray[0])
+        // console.log("image--",carImages.c8_1)
+
+        setCarFileArray(getCarFileArray)
+    }
 
     // 初期位置
     const [positions, setPositions] = useState(
-        new Array(6).fill(0).map((value,index) => ({
+        new Array(roomInNumberOfPeople).fill(0).map((value,index) => ({
             top: new Animated.Value(Number.isInteger(index/2)?
                 verticalScale(28):verticalScale(38)),
             left: new Animated.Value(Number.isInteger(index/2)?
                 horizontalScale(100):horizontalScale(100)),
-            zIndex: 7-index
+            zIndex: roomInNumberOfPeople - index + 1
         }))
     );
 
@@ -53,6 +99,7 @@ export default function Sec4_Room()  {
     };
 
     useEffect(() => {
+        placeMultipleCars()
         moveImagesSequentially(); // アニメーション開始
     }, []);
 
@@ -85,6 +132,12 @@ export default function Sec4_Room()  {
         }
     }
 
+    // const getCarImage = (index:number) => {
+    //     console.log(carFileArray.length)
+    //     console.log(carFileArray[index])
+    //     return require(`../../assets/images/cars/${carFileArray[index]}.png`);
+    // };
+
     return (
         <View style={styles.container}>
             <Image style={{width: '100%', height:'100%'}}
@@ -108,13 +161,11 @@ export default function Sec4_Room()  {
                         top: position.top,
                         left: position.left,
                         zIndex: position.zIndex
-                        // width: 100,
-                        // height: 100,
                     }}
                 >
                     <Image
-                        source={require('../../assets/images/cars/car1_1.png')}
-                        // image=${index + 1}` }} // 画像のソース（適宜変更）
+                        // source={require(`../../assets/images/cars/car8_1.png`)}
+                        source={carImages[carFileArray[index]]}
                         style={{ width: 106 }}
                         resizeMode='contain'
                     />
