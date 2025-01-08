@@ -3,12 +3,14 @@ import { View, Text, Button } from "react-native";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GroupUsersByLocation from "./../components/GroupUsersByLocation";
+import { useAtom } from "jotai";
+import { locationAtom, clientIdAtom } from "./../atom";
 
 export default function App() {
-  const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<any>(null);
-  const [clientId, setClientId] = useState<string | null>(null);
+  const [location, setLocation] = useAtom(locationAtom);
+  const [clientId, setClientId] = useAtom(clientIdAtom);
 
   useEffect(() => {
     (async () => {

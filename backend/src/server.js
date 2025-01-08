@@ -38,25 +38,36 @@ function setupServer() {
   app.post("/api/users/locations", async (req, res) => {
     const { uuid, location } = req.body;
 
+    // リクエストのバリデーション
     if (!req.body || !uuid || !location) {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
     const insertData = {
-      uuid: req.body.uuid,
+      uuid,
       latitude: location.latitude,
       longitude: location.longitude,
+      created_at: knex.fn.now(), // 最新時刻を入れる
     };
 
     console.log(new Date().toLocaleString());
     console.log("🐣 insertData", insertData);
 
     try {
-      await knex("locations").insert(insertData);
-      res.status(200).json({ location: location });
+      // ここでアップサート (onConflict -> merge) を行う
+      await knex("locations")
+        .insert(insertData)
+        .onConflict("uuid")
+        .merge({
+          latitude: knex.raw("excluded.latitude"), // insertData.latitudeに相当
+          longitude: knex.raw("excluded.longitude"),
+          created_at: knex.raw("excluded.created_at"),
+        });
+
+      return res.status(200).json({ location });
     } catch (error) {
-      console.error("Error inserting location:", error.message);
-      res.status(500).json({ error: "Failed to insert location" });
+      console.error("Error upserting location:", error.message);
+      return res.status(500).json({ error: "Failed to upsert location" });
     }
   });
 
@@ -64,11 +75,12 @@ function setupServer() {
     try {
       const latestLocations = await knex("locations")
         .select("uuid", "latitude", "longitude", "created_at")
+        .where("created_at", ">=", knex.raw(`NOW() - INTERVAL '10 minutes'`)) // 10分以上経過しているデータを除外
         .orderBy("uuid") // uuidでソート
         .orderBy("created_at", "desc") // uuidごとに最新のデータを優先
         .distinctOn("uuid"); // uuidごとに一意なデータを取得
 
-      res.status(200).json(latestLocations); // JSONでクライアントに送信
+      res.status(200).json(latestLocations);
     } catch (error) {
       console.error("Error fetching locations:", error);
       res.status(500).json({ error: "サーバーでエラーが発生しました。" });
