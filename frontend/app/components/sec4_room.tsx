@@ -21,8 +21,11 @@ export default function Sec4_Room()  {
     // 初期位置
     const [positions, setPositions] = useState(
         new Array(6).fill(0).map((value,index) => ({
-            top: new Animated.Value(Number.isInteger(index/2)?verticalScale(28):verticalScale(38)),
-            left: new Animated.Value(Number.isInteger(index/2)?horizontalScale(100):horizontalScale(100)),
+            top: new Animated.Value(Number.isInteger(index/2)?
+                verticalScale(28):verticalScale(38)),
+            left: new Animated.Value(Number.isInteger(index/2)?
+                horizontalScale(100):horizontalScale(100)),
+            zIndex: 7-index
         }))
     );
 
@@ -107,6 +110,7 @@ export default function Sec4_Room()  {
                         position: 'absolute',
                         top: position.top,
                         left: position.left,
+                        zIndex: position.zIndex
                         // width: 100,
                         // height: 100,
                     }}
