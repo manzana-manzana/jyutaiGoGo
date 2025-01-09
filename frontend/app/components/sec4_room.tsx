@@ -108,8 +108,8 @@ export default function Sec4_Room()  {
 
     useEffect(() => {
         console.log('effect----------')
-            placeMultipleCars(1)
-            moveImagesSequentially();
+            // placeMultipleCars(1)
+            // moveImagesSequentially();
 
             //ここあとで制御変更する⭐️通話開始したら切り替え
             setTimeout(()=>{
