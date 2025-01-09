@@ -9,7 +9,7 @@ import {useAtomValue} from "jotai";
 import {useAtom} from "jotai/index";
 // import LinearGradient from 'react-native-linear-gradient';
 // import Animated from "react-native-reanimated";
-
+import { LinearGradient } from 'expo-linear-gradient';
 
 const carImages = {
     c1_0:require(`../../assets/images/cars/car1_0.png`),
@@ -155,11 +155,23 @@ export default function Sec4_Room()  {
             </View>
 
             <View style={[{opacity: isRoom ?0:1},thisStyles.main]}>
-                <View style={thisStyles.waitArea}>
+                {/*<View style={thisStyles.waitArea}></View>*/}
+                <LinearGradient
+                    // Background Linear Gradient
+                    colors={['rgba(255, 225, 225, 0.7)','rgba(217,217,217,0.7)']}
+                    end={{ x: 0.5, y: 0.75 }}
+                    style={thisStyles.waitArea}
+                />
+                <LinearGradient
+                    // Background Linear Gradient
+                    colors={['rgba(217,217,217,0.7)','rgba(217,217,217,0)']}
+                    end={{ x: 0.5, y: 0.75 }}
+                    style={thisStyles.waitArea2}
+                />
 
                     <Text style={thisStyles.waitText1}>読み込み中</Text>
-                </View>
-                <View style={thisStyles.waitArea2}></View>
+                {/*</View>*/}
+                {/*<View style={thisStyles.waitArea2}></View>*/}
 
                 <Image
                     source={carImages[`cw_1`]}
@@ -297,19 +309,19 @@ const thisStyles = StyleSheet.create({
         top: 0,
         left:0,
         width: '100%',
-        height: verticalScale(36),
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        height: verticalScale(36*0.75),
+        // backgroundColor: 'rgba(255, 255, 255, 0.54)',
         // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
         // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
         alignItems:'center'
     },
     waitArea2: {
         position: 'absolute',
-        top: verticalScale(36),
+        top: verticalScale(36*0.75),
         left:0,
         width: '100%',
-        height: verticalScale(1),
-        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        height: verticalScale(36*0.25),
+        // backgroundColor: 'rgba(255, 255, 255, 0.4)',
         // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
         // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
         alignItems:'center'
