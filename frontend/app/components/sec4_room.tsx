@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions, Button} from 'react-native';
+import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions, Button, ImageSourcePropType} from 'react-native';
 import {styles} from "@/app/style";
 // import {moderateScale} from "react-native-size-matters";
 import Metrics from './metrics'
@@ -11,7 +11,10 @@ import {useAtom} from "jotai/index";
 // import Animated from "react-native-reanimated";
 import { LinearGradient } from 'expo-linear-gradient';
 
-const carImages = {
+type CarImages = {
+    [key: string]: ImageSourcePropType;
+};
+const carImages:CarImages = {
     c1_0:require(`../../assets/images/cars/car1_0.png`),
     c1_1:require(`../../assets/images/cars/car1_1.png`),
     c2_0:require(`../../assets/images/cars/car2_0.png`),
@@ -41,9 +44,9 @@ export default function Sec4_Room()  {
     const [isExit, setIsExit]= useState(false)
     const [carNoArray, setCarNoArray] = useState<number[]>([])
     const [carFileArray, setCarFileArray] = useState<string[]>([])
-    const [myNum, setMyNum]= useState(0)
-    const [isRoom,setIsRoom]= useState(false)
-    const [isCompReading, setIsCompReading] = useState(false)
+    const [myNum, setMyNum]= useState<number>(0)
+    const [isRoom,setIsRoom]= useState<boolean>(false)
+    const [isCompReading, setIsCompReading] = useState<boolean>(false)
 
     const placeMultipleCars = (startNum:number) => {
         console.log('placeMultipleCars---',startNum)
