@@ -42,6 +42,7 @@ export default function Sec4_Room()  {
     const [carFileArray, setCarFileArray] = useState([])
     const [myNum, setMyNum]= useState(0)
     const [isRoom,setIsRoom]= useState(false)
+    const [isCompReading, setIsCompReading] = useState(false)
 
     const placeMultipleCars = () => {
 
@@ -107,11 +108,12 @@ export default function Sec4_Room()  {
             moveImagesSequentially();
 
             //ここあとで制御変更する⭐️通話開始したら切り替え
-            // setTimeout(()=>{
-            //     setIsRoom(true)}
-            //     ,(roomInNumberOfPeople + 1) * 1000)
-
-            console.log('is--end-', isRoom)
+            setTimeout(()=>{
+                    setIsCompReading(true)}
+                ,(roomInNumberOfPeople + 1) * 1000)
+            setTimeout(()=>{
+                    setIsRoom(true)}
+                ,(roomInNumberOfPeople + 3) * 1000)
 
     }, []);
 
@@ -127,6 +129,7 @@ export default function Sec4_Room()  {
                     setIsJam(false)
                     setIsTalk(false)
                     setIsRoom(false)
+                    setIsCompReading(false)
                     clearInterval(countDownTimer)
                     console.log("timer_end__")
                 }else{
@@ -158,7 +161,7 @@ export default function Sec4_Room()  {
                 {/*<View style={thisStyles.waitArea}></View>*/}
                 <LinearGradient
                     // Background Linear Gradient
-                    colors={['rgba(255, 225, 225, 0.7)','rgba(217,217,217,0.7)']}
+                    colors={['rgba(255, 255, 255, 1)','rgba(217,217,217,0.7)']}
                     end={{ x: 0.5, y: 0.75 }}
                     style={thisStyles.waitArea}
                 />
@@ -169,7 +172,7 @@ export default function Sec4_Room()  {
                     style={thisStyles.waitArea2}
                 />
 
-                    <Text style={thisStyles.waitText1}>読み込み中</Text>
+                    <Text style={thisStyles.waitText1}>{isCompReading?'参加しました！': '読み込み中'}</Text>
                 {/*</View>*/}
                 {/*<View style={thisStyles.waitArea2}></View>*/}
 
