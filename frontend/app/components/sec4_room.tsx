@@ -1,11 +1,34 @@
-import React, {useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions} from 'react-native';
 import {styles} from "@/app/style";
-import {moderateScale} from "react-native-size-matters";
+// import {moderateScale} from "react-native-size-matters";
+import Metrics from './metrics'
+const {horizontalScale, verticalScale, moderateScale} = Metrics
 import {isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
 import {useAtomValue} from "jotai";
 import {useAtom} from "jotai/index";
+// import LinearGradient from 'react-native-linear-gradient';
+// import Animated from "react-native-reanimated";
 
+
+const carImages = {
+    c1_0:require(`../../assets/images/cars/car1_0.png`),
+    c1_1:require(`../../assets/images/cars/car1_1.png`),
+    c2_0:require(`../../assets/images/cars/car2_0.png`),
+    c2_1:require(`../../assets/images/cars/car2_1.png`),
+    c3_0:require(`../../assets/images/cars/car3_0.png`),
+    c3_1:require(`../../assets/images/cars/car3_1.png`),
+    c4_0:require(`../../assets/images/cars/car4_0.png`),
+    c4_1:require(`../../assets/images/cars/car4_1.png`),
+    c5_0:require(`../../assets/images/cars/car5_0.png`),
+    c5_1:require(`../../assets/images/cars/car5_1.png`),
+    c6_0:require(`../../assets/images/cars/car6_0.png`),
+    c6_1:require(`../../assets/images/cars/car6_1.png`),
+    c7_0:require(`../../assets/images/cars/car7_0.png`),
+    c7_1:require(`../../assets/images/cars/car7_1.png`),
+    c8_0:require(`../../assets/images/cars/car8_0.png`),
+    c8_1:require(`../../assets/images/cars/car8_1.png`),
+}
 
 export default function Sec4_Room()  {
     const roomInNumberOfPeople = useAtomValue(roomInNumberOfPeopleAtom)
@@ -13,17 +36,90 @@ export default function Sec4_Room()  {
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
+    const [carFileArray, setCarFileArray] = useState([])
+    const [myNum, setMyNum]= useState(0)
+    const [isRoom,setIsRoom]= useState(false)
+
+    const placeMultipleCars = () => {
+
+        const getCarNoArray: number[] = []
+        const getCarFileArray: string[] = []
+        setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)//ユーザー車位置は参加者3人までなら2、4人以上なら4
+
+        for (let i = 1; i <= roomInNumberOfPeople; i++) {
+            let carNo = 0
+            while (carNo === 0) {
+                const getNo = Math.floor(Math.random() * 8) + 1;
+                if (!getCarNoArray.includes(getNo)) {
+                    carNo = getNo
+                    getCarNoArray.push(getNo)
+                }
+            }
+            const carFileName = `c${carNo}_`
+            // const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
+            getCarFileArray.push(carFileName)
+
+        }
+        console.log('is--',isRoom)
+　       setCarFileArray(getCarFileArray)
+    }
+
+    // 初期位置
+    const [positions, setPositions] = useState(
+        new Array(roomInNumberOfPeople).fill(0).map((value,index) => ({
+            top: new Animated.Value(Number.isInteger(index/2)?
+                verticalScale(28):verticalScale(38)),
+            left: new Animated.Value(Number.isInteger(index/2)?
+                horizontalScale(100):horizontalScale(100)),
+            zIndex: roomInNumberOfPeople - index + 1
+        }))
+    );
+
+    const moveImagesSequentially = () => {
+        const animations = positions.map((position, index) => {
+            return Animated.parallel([
+                Animated.timing(position.left, {
+                    toValue: horizontalScale(Number.isInteger(index/2)?
+                        Math.floor(10 + Math.floor(index/2) * 21.5): Math.floor(22+ Math.floor(index/2) * 21.5)),
+                    duration: 1000,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(position.top, {
+                    toValue: verticalScale(Number.isInteger(index/2)?
+                        Math.floor(52 - Math.floor(index/2) * 5.5): Math.floor(59 - Math.floor(index/2) * 5.5)),
+                    duration: 1000,
+                    useNativeDriver: false,
+                })
+            ]);
+        });
+
+        Animated.stagger(1000, animations).start(); // 1秒ごとに次の画像が動く
+        console.log('is-2-',isRoom)
+    };
+
+    useEffect(() => {
+            placeMultipleCars()
+            moveImagesSequentially();
+            setTimeout(()=>{
+                setIsRoom(true)}
+                ,(roomInNumberOfPeople + 1) * 1000)
+
+            console.log('is--end-', isRoom)
+
+    }, []);
+
 
     const startExit = ()=>{
         if(!isExit){
             setIsExit(true)
-            let countNum=11
+            let countNum=2
             const countDownTimer = setInterval(()=>{
                 if(countNum<=1){
                     setIsExit(false)
                     setCount(10)
                     setIsJam(false)
                     setIsTalk(false)
+                    setIsRoom(false)
                     clearInterval(countDownTimer)
                     console.log("timer_end__")
                 }else{
@@ -34,37 +130,94 @@ export default function Sec4_Room()  {
         }
     }
 
+
     return (
         <View style={styles.container}>
             <Image style={{width: '100%', height:'100%'}}
                    resizeMode='contain'
                    source={require('../../assets/images/sec4_room.png')}/>
-            <Pressable style={thisStyles.button} onPress={startExit} >
-                <Text style={thisStyles.buttonText}>退出</Text>
-            </Pressable>
-            <View style={thisStyles.peopleArea}>
-                <Text style={thisStyles.peopleText1}>現在</Text>
-                <Text style={thisStyles.peopleText2}>{roomInNumberOfPeople}</Text>
-                <Text style={thisStyles.peopleText3}>名</Text>
+
+            <View style={[{opacity: isRoom ? 1:0},thisStyles.main]}>
+                <Pressable style={thisStyles.button} onPress={startExit} >
+                    <Text style={thisStyles.buttonText}>退出</Text>
+                </Pressable>
+                <View style={thisStyles.peopleArea}>
+                    <Text style={thisStyles.peopleText1}>現在</Text>
+                    <Text style={thisStyles.peopleText2}>{roomInNumberOfPeople}</Text>
+                    <Text style={thisStyles.peopleText3}>名</Text>
+                </View>
             </View>
+
+            <View style={[{opacity: isRoom ?0:1},thisStyles.main]}>
+                <View style={thisStyles.waitArea}>
+
+                    <Text style={thisStyles.waitText1}>読み込み中</Text>
+                </View>
+                <View style={thisStyles.waitArea2}></View>
+
+                <Image
+                    source={carImages[`c6_0`]}
+                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(59), left: horizontalScale(-14)}}
+                    resizeMode='contain'
+                />
+                <Image
+                    source={carImages[`c7_0`]}
+                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(65), left: horizontalScale(1)}}
+                    resizeMode='contain'
+                />
+                <Image
+                    source={carImages[`c8_0`]}
+                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(70), left: horizontalScale(-20)}}
+                    resizeMode='contain'
+                />
+            </View>
+
+            {positions.map((position, index) => (
+                <Animated.View
+                    key={index}
+                    style={{
+                        position: 'absolute',
+                        top: position.top,
+                        left: position.left,
+                        zIndex: position.zIndex
+                    }}
+                >
+                    <Image
+                        // source={require(`../../assets/images/cars/car8_1.png`)}
+                        source={carImages[`${carFileArray[index]}${!isRoom || index===myNum ? 1 : 0}`]}
+                        style={{ width: horizontalScale(27) }}
+                        resizeMode='contain'
+                    />
+                </Animated.View>
+            ))}
+
             <View style={[thisStyles.countArea,{opacity: isExit ? 1:0 }]}>
                 <Text style={thisStyles.countText1}>まもなくルームから退出します</Text>
                 <Text style={thisStyles.countText2}>{count}</Text>
             </View>
+
         </View>
     );
 };
 
 const thisStyles = StyleSheet.create({
+    main:{
+        position:'absolute',
+        top:0,
+        left:0,
+        width:'100%',
+        height:'100%',
+        alignItems:'center'
+    },
     button: {
         position: 'absolute',
-        top: '75%',//あとで再計算
-        width: '72%',
-        height: '9%',
+        top: verticalScale(75),//あとで再計算
+        width: horizontalScale(72),
+        height: verticalScale(9),
         borderRadius: 40,
         backgroundColor:'#737373',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     buttonText:{
         fontWeight: 'bold',
@@ -76,9 +229,9 @@ const thisStyles = StyleSheet.create({
     peopleArea: {
         position: 'absolute',
         flexDirection: 'row',
-        top: '15%',//あとで再計算
-        width: '50%',
-        height: '11%',
+        top: verticalScale(15),//あとで再計算
+        width: horizontalScale(50),
+        height: verticalScale(11),
     },
     peopleText1: {
         fontWeight: 'bold',
@@ -108,15 +261,16 @@ const thisStyles = StyleSheet.create({
     countArea: {
         position: 'absolute',
         alignItems:'center',
-        top: '30%',//あとで再計算
-        width: '95%',
-        height: '26%',
+        top: verticalScale(30),//あとで再計算
+        width: horizontalScale(95),
+        height: verticalScale(26),
         borderRadius: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        zIndex:99
     },
     countText1: {
         position: 'absolute',
-        top: '17%',
+        top: verticalScale(5),//17
         fontWeight: 'bold',
         fontSize: moderateScale(22),
         fontFamily: 'BIZ UDPGothic',
@@ -124,7 +278,7 @@ const thisStyles = StyleSheet.create({
     },
     countText2: {
         position: 'absolute',
-        top: '46%',
+        top: verticalScale(12),//46
         textAlign: 'center',
         width: '100%',
         fontWeight: 'bold',
@@ -132,5 +286,34 @@ const thisStyles = StyleSheet.create({
         fontFamily: 'BIZ UDPGothic',
         color:'black',
     },
-
+    waitArea: {
+        position: 'absolute',
+        top: 0,
+        left:0,
+        width: '100%',
+        height: verticalScale(36),
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
+        // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
+        alignItems:'center'
+    },
+    waitArea2: {
+        position: 'absolute',
+        top: verticalScale(36),
+        left:0,
+        width: '100%',
+        height: verticalScale(1),
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
+        // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
+        alignItems:'center'
+    },
+    waitText1: {
+        fontWeight: 'bold',
+        fontSize: moderateScale(40),
+        fontFamily: 'BIZ UDPGothic',
+        color:'#2B2B2B',
+        position:'absolute',
+        top:verticalScale(19)
+    },
 })

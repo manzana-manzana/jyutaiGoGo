@@ -1,16 +1,20 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Dimensions } from 'react-native';
 import {styles} from "@/app/style";
-import {moderateScale} from "react-native-size-matters";
-// import {useFonts} from "expo-font";
+// import {moderateScale} from "react-native-size-matters";
 import {useFonts, NotoSansJP_700Bold } from '@expo-google-fonts/noto-sans-jp';
-//Inter_900Black
+import Metrics from './metrics'
+const { verticalScale, moderateScale } = Metrics;
+
+// import {vw, vh} from 'react-native-viewport-units';
+
 export default function Sec0_1_Opening()  {
-    // const notoSansJP = useFonts(require('../../assets/font/Noto_Sans_JP/static/NotoSansJP-Bold.ttf'))
     let [fontsLoaded] = useFonts({
         NotoSansJP_700Bold,
     });
+
     return (
+
         <View style={styles.container}>
         <View style={thisStyles.area}>
             <Text style={[thisStyles.text]}>
@@ -19,7 +23,6 @@ export default function Sec0_1_Opening()  {
             ながら運転は道路交通法により{"\n"}
             禁止されています。
             </Text>
-            {/*{fontFamily:NotoSansJP_700Bold},*/}
             <Text style={[{fontFamily:'NotoSansJP_700Bold'}, thisStyles.text]}>
             イヤホンの使用はお控えください。{"\n"}
             道路交通法70条に定められた{"\n"}
@@ -34,8 +37,8 @@ export default function Sec0_1_Opening()  {
 const thisStyles = StyleSheet.create({
     area:{
         position: 'absolute',
-        top: '29%',
-        height: '42%',
+        top: verticalScale(29),
+        height: verticalScale(42),
         justifyContent: 'space-between',
 
     },

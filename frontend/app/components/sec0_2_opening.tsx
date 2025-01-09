@@ -1,8 +1,9 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {styles} from "@/app/style";
-import {moderateScale} from "react-native-size-matters";
-
+// import {moderateScale} from "react-native-size-matters";
+import Metrics from './metrics'
+const {horizontalScale, verticalScale, moderateScale} = Metrics
 
 export default function Sec0_2_Opening()  {
     return (
@@ -23,16 +24,16 @@ const thisStyles = StyleSheet.create({
         // borderStyle:'solid',
         // borderWidth:1,
         position: 'absolute',
-        top: '27%',
-        width: '58%',
-        height: '6%'
+        top: verticalScale(27),
+        width: horizontalScale(58),
+        height: verticalScale(6)
     },
     dig: {
         // borderStyle:'solid',
         // borderWidth:1,
         position: 'absolute',
-        top: '48%',
-        width: '58%',
-        height: '28%'
+        top: verticalScale(48),
+        width: horizontalScale(58),
+        height: verticalScale(28)
     },
 });
