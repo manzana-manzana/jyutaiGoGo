@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions} from 'react-native';
+import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions, Button} from 'react-native';
 import {styles} from "@/app/style";
 // import {moderateScale} from "react-native-size-matters";
 import Metrics from './metrics'
@@ -34,19 +34,21 @@ const carImages = {
 }
 
 export default function Sec4_Room()  {
-    const roomInNumberOfPeople = useAtomValue(roomInNumberOfPeopleAtom)
+    const [roomInNumberOfPeople,setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom)
     const [isJam, setIsJam] = useAtom(isJamAtom)
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
-    const [carFileArray, setCarFileArray] = useState([])
+    const [carNoArray, setCarNoArray] = useState<number[]>([])
+    const [carFileArray, setCarFileArray] = useState<string[]>([])
     const [myNum, setMyNum]= useState(0)
     const [isRoom,setIsRoom]= useState(false)
+    const [isCompReading, setIsCompReading] = useState(false)
 
     const placeMultipleCars = () => {
 
-        const getCarNoArray: number[] = []
-        const getCarFileArray: string[] = []
+        const getCarNoArray: number[] = carNoArray.slice()
+        const getCarFileArray: string[] = carFileArray.slice()
         setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)//ユーザー車位置は参加者3人までなら2、4人以上なら4
 
         for (let i = 1; i <= roomInNumberOfPeople; i++) {
@@ -61,10 +63,10 @@ export default function Sec4_Room()  {
             const carFileName = `c${carNo}_`
             // const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
             getCarFileArray.push(carFileName)
-
         }
         console.log('is--',isRoom)
-　       setCarFileArray(getCarFileArray)
+        setCarFileArray(getCarFileArray)
+        setCarNoArray(getCarNoArray)
     }
 
     // 初期位置
@@ -103,18 +105,23 @@ export default function Sec4_Room()  {
     };
 
     useEffect(() => {
+        console.log('effect----------')
             placeMultipleCars()
-            moveImagesSequentially();
+            moveImagesSequentially(1);
 
             //ここあとで制御変更する⭐️通話開始したら切り替え
-            // setTimeout(()=>{
-            //     setIsRoom(true)}
-            //     ,(roomInNumberOfPeople + 1) * 1000)
-
-            console.log('is--end-', isRoom)
+            setTimeout(()=>{
+                    setIsCompReading(true)}
+                ,(roomInNumberOfPeople + 1) * 1000)
+            setTimeout(()=>{
+                    setIsRoom(true)}
+                ,(roomInNumberOfPeople + 3) * 1000)
 
     }, []);
 
+    useEffect(() => {
+        console.log('人数変更',roomInNumberOfPeople)
+    }, [roomInNumberOfPeople]);
 
     const startExit = ()=>{
         if(!isExit){
@@ -127,6 +134,7 @@ export default function Sec4_Room()  {
                     setIsJam(false)
                     setIsTalk(false)
                     setIsRoom(false)
+                    setIsCompReading(false)
                     clearInterval(countDownTimer)
                     console.log("timer_end__")
                 }else{
@@ -140,8 +148,18 @@ export default function Sec4_Room()  {
 
     return (
         <View style={styles.container}>
+
+
             <Image style={{width: '100%', height:'100%'}}
                    source={require('../../assets/images/sec4_room.png')}/>
+
+            <View style={{position:'absolute', top:'65%',left:'50%',backgroundColor:'yellow'}}>
+                <Button title='人数を増やす' onPress={()=>{setRoomInNumberOfPeople(roomInNumberOfPeople+1)}}
+                        color="red" accessibilityLabel="button"/></View>
+
+            <View style={{position:'absolute', top:'70%',left:'50%', backgroundColor:'skyblue'}}>
+                <Button title='人数をへらす' onPress={()=>{setRoomInNumberOfPeople(roomInNumberOfPeople-1)}}
+                        color="red" accessibilityLabel="button"/></View>
 
             <View style={[{opacity: isRoom ? 1:0},thisStyles.main]}>
                 <Pressable style={thisStyles.button} onPress={startExit} >
@@ -158,7 +176,7 @@ export default function Sec4_Room()  {
                 {/*<View style={thisStyles.waitArea}></View>*/}
                 <LinearGradient
                     // Background Linear Gradient
-                    colors={['rgba(255, 225, 225, 0.7)','rgba(217,217,217,0.7)']}
+                    colors={['rgba(255, 255, 255, 1)','rgba(217,217,217,0.7)']}
                     end={{ x: 0.5, y: 0.75 }}
                     style={thisStyles.waitArea}
                 />
@@ -169,7 +187,7 @@ export default function Sec4_Room()  {
                     style={thisStyles.waitArea2}
                 />
 
-                    <Text style={thisStyles.waitText1}>読み込み中</Text>
+                    <Text style={thisStyles.waitText1}>{isCompReading?'参加しました！': '読み込み中'}</Text>
                 {/*</View>*/}
                 {/*<View style={thisStyles.waitArea2}></View>*/}
 
