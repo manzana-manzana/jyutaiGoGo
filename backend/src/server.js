@@ -4,6 +4,7 @@ const multer = require("multer");
 const cors = require("cors");
 const knex = require("../knex");
 const { v4: uuidV4 } = require("uuid");
+const agoraController = require("./agora/agoraController");
 
 function setupServer() {
   const app = express();
@@ -86,6 +87,9 @@ function setupServer() {
       res.status(500).json({ error: "サーバーでエラーが発生しました。" });
     }
   });
+
+  //Agoraここから-----------------------------------------------
+  app.post('/api/tokens', agoraController.token);
 
   app.get("/", (req, res) => {
     console.log("hello world");
