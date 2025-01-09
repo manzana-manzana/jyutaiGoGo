@@ -160,11 +160,16 @@ export default function Sec4_Room()  {
                     style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(59), left: horizontalScale(-14)}}
                     resizeMode='contain'
                 />
-                    <Image
-                        source={carImages[`c7_0`]}
-                        style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(65), left: horizontalScale(-1)}}
-                        resizeMode='contain'
-                    />
+                <Image
+                    source={carImages[`c7_0`]}
+                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(65), left: horizontalScale(1)}}
+                    resizeMode='contain'
+                />
+                <Image
+                    source={carImages[`c8_0`]}
+                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(70), left: horizontalScale(-20)}}
+                    resizeMode='contain'
+                />
             </View>
 
             {positions.map((position, index) => (
