@@ -156,43 +156,17 @@ export default function Sec1_Wait()  {
 
     useEffect(() => {
 
-            // console.log(position1)
             Animated.loop(
 
                 Animated.sequence([
                     Animated.parallel([
                         Animated.parallel(setEndPoint(position1.left, position1.top, 67, -50)),
-                        // Animated.parallel(setEndPoint(position2.left, position2.top, 78, 100)),
-                        // Animated.parallel(setEndPoint(position2.left, position2.top, 78, 100)),
                         Animated.parallel(setEndPoint(position2.left, position2.top, 37, 100))
                     ]),
                     Animated.parallel(setEndPoint(position2.left, position2.top, 78, -50)),
 
-                // Animated.parallel(setEndPoint(position2.current.left,position2.current.top,40,90)),
-                // Animated.delay(1000),
             ])
             ).start()
-            // setPosition1( {top: new Animated.Value(verticalScale(28)),
-            //     left: new Animated.Value(horizontalScale(100))})
-            // setPosition2( {top: new Animated.Value(verticalScale(35)),
-            //     left: new Animated.Value(horizontalScale(100))})
-            // ).start()
-
-        // Animated.loop(
-        //     Animated.sequence([
-                // Animated.delay(1000),
-                // Animated.parallel(setEndPoint(position1.current.left,position1.current.top,67)),
-            //     Animated.parallel(setEndPoint(position2.current.left,position2.current.top,78)),
-            //
-            // ])
-        // ).start()
-
-        // Animated.loop(
-        //     Animated.sequence([
-        //     Animated.delay(5000),
-        //     Animated.parallel(setEndPoint(1,78)),
-        //     ])
-        // ).start()
     }, []);
     //車ムービー_ここまで_______________________________________
 
@@ -265,7 +239,6 @@ export default function Sec1_Wait()  {
     return (
         <View style={styles.container}>
             <Image style={{width: '100%', height:'100%'}}
-                   resizeMode='contain'
                    source={require('../../assets/images/sec1_wait.png')}/>
 
             <Animated.View
