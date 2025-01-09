@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions, Button} from 'react-native';
+import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions, Button, ImageSourcePropType} from 'react-native';
 import {styles} from "@/app/style";
 // import {moderateScale} from "react-native-size-matters";
 import Metrics from './metrics'
@@ -11,7 +11,10 @@ import {useAtom} from "jotai/index";
 // import Animated from "react-native-reanimated";
 import { LinearGradient } from 'expo-linear-gradient';
 
-const carImages = {
+type CarImages = {
+    [key: string]: ImageSourcePropType;
+};
+const carImages:CarImages = {
     c1_0:require(`../../assets/images/cars/car1_0.png`),
     c1_1:require(`../../assets/images/cars/car1_1.png`),
     c2_0:require(`../../assets/images/cars/car2_0.png`),
@@ -41,17 +44,17 @@ export default function Sec4_Room()  {
     const [isExit, setIsExit]= useState(false)
     const [carNoArray, setCarNoArray] = useState<number[]>([])
     const [carFileArray, setCarFileArray] = useState<string[]>([])
-    const [myNum, setMyNum]= useState(0)
-    const [isRoom,setIsRoom]= useState(false)
-    const [isCompReading, setIsCompReading] = useState(false)
+    const [myNum, setMyNum]= useState<number>(0)
+    const [isRoom,setIsRoom]= useState<boolean>(false)
+    const [isCompReading, setIsCompReading] = useState<boolean>(false)
 
-    const placeMultipleCars = () => {
-
+    const placeMultipleCars = (startNum:number) => {
+        console.log('placeMultipleCars---',startNum)
         const getCarNoArray: number[] = carNoArray.slice()
         const getCarFileArray: string[] = carFileArray.slice()
         setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)//ユーザー車位置は参加者3人までなら2、4人以上なら4
 
-        for (let i = 1; i <= roomInNumberOfPeople; i++) {
+        for (let i = startNum; i <= roomInNumberOfPeople; i++) {
             let carNo = 0
             while (carNo === 0) {
                 const getNo = Math.floor(Math.random() * 8) + 1;
@@ -65,13 +68,14 @@ export default function Sec4_Room()  {
             getCarFileArray.push(carFileName)
         }
         console.log('is--',isRoom)
+        console.log(getCarNoArray)
         setCarFileArray(getCarFileArray)
         setCarNoArray(getCarNoArray)
     }
 
     // 初期位置
     const [positions, setPositions] = useState(
-        new Array(roomInNumberOfPeople).fill(0).map((value,index) => ({
+        new Array(7).fill(0).map((value,index) => ({
             top: new Animated.Value(Number.isInteger(index/2)?
                 verticalScale(28):verticalScale(38)),
             left: new Animated.Value(Number.isInteger(index/2)?
@@ -81,6 +85,7 @@ export default function Sec4_Room()  {
     );
 
     const moveImagesSequentially = () => {
+        console.log('moveImagesSequentially---')
         const animations = positions.map((position, index) => {
             return Animated.parallel([
                 Animated.timing(position.left, {
@@ -100,14 +105,14 @@ export default function Sec4_Room()  {
             ]);
         });
 
-        Animated.stagger(1000, animations).start(); // 1秒ごとに次の画像が動く
+        Animated.stagger(1000, animations).start();
         console.log('is-2-',isRoom)
     };
 
     useEffect(() => {
         console.log('effect----------')
-            placeMultipleCars()
-            moveImagesSequentially();
+            // placeMultipleCars(1)
+            // moveImagesSequentially();
 
             //ここあとで制御変更する⭐️通話開始したら切り替え
             setTimeout(()=>{
@@ -120,7 +125,23 @@ export default function Sec4_Room()  {
     }, []);
 
     useEffect(() => {
-        console.log('人数変更',roomInNumberOfPeople)
+        console.log('人数変更',roomInNumberOfPeople,'元人数',carFileArray.length)
+            if(roomInNumberOfPeople < carFileArray.length) {
+                //人数減少
+                console.log('down')
+                const getCarNoArray: number[] = carNoArray.slice(0,roomInNumberOfPeople)
+                const getCarFileArray: string[] = carFileArray.slice(0,roomInNumberOfPeople)
+                setCarNoArray(getCarNoArray)
+                setCarFileArray(getCarFileArray)
+                setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)
+                moveImagesSequentially();
+            }else {
+                //人数増加
+                console.log('up')
+                placeMultipleCars(carFileArray.length + 1)
+                moveImagesSequentially();
+            }
+
     }, [roomInNumberOfPeople]);
 
     const startExit = ()=>{
@@ -148,7 +169,6 @@ export default function Sec4_Room()  {
 
     return (
         <View style={styles.container}>
-
 
             <Image style={{width: '100%', height:'100%'}}
                    source={require('../../assets/images/sec4_room.png')}/>
@@ -208,18 +228,19 @@ export default function Sec4_Room()  {
                 />
             </View>
 
-            {positions.map((position, index) => (
+            {/*{positions.map((position, index) => (*/}
+            {carFileArray.map((carFile, index) => (
                 <Animated.View
                     key={index}
                     style={{
                         position: 'absolute',
-                        top: position.top,
-                        left: position.left,
-                        zIndex: position.zIndex
+                        top: positions[index].top,
+                        left: positions[index].left,
+                        zIndex: positions[index].zIndex
                     }}
                 >
                     <Image
-                        source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
+                        source={carImages[`${carFile}${!isRoom || index === myNum ? 1 : 0}`]}
                         // source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
                         style={{ width: horizontalScale(25) }}
                         resizeMode='contain'
