@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Animated, Button, Image, StyleSheet, Text, View} from 'react-native';
 // import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import Metrics from './metrics'
 const {horizontalScale, verticalScale, moderateScale} = Metrics
@@ -9,6 +9,7 @@ import {apiAddressAtom, isJamAtom, isTalkAtom} from "@/app/atom";
 // import {amiVoice} from "@/app/components/sec1_wait_amiVoice";
 import {useAtomValue} from "jotai/index";
 import { Audio, Video } from "expo-av";
+import {number} from "prop-types";
 
 // import {Button, View, StyleSheet, Text} from "react-native";
 // import { Audio } from "expo-av";
@@ -124,6 +125,51 @@ export default function Sec1_Wait()  {
     const [recordingText, setRecordingText] = useState('')
     const [isRecordingSuccessful, setIsRecordingSuccessful] = useState(false)
 
+    //車ムービー_ここから_______________________________________
+    // const position,setPosition] = useState([
+    const [position1,setPosition1] =useState(
+        {top: new Animated.Value(verticalScale(28)),
+        left: new Animated.Value(horizontalScale(100))}
+    );
+    const [position2, setPosition2]=useState(
+        {top: new Animated.Value(verticalScale(37)),
+        left: new Animated.Value(horizontalScale(100))}
+);
+
+    const setEndPoint = (left:Animated.Value, top:Animated.Value,topNum:number,leftNum:number)=>{
+        // console.log("carNum;",carNum)
+        return [
+            Animated.timing(left, {
+                toValue: horizontalScale(leftNum),//11
+                duration: 4000,
+                useNativeDriver: false,
+            })
+            ,
+            Animated.timing(top, {
+                toValue: verticalScale(topNum),//51
+                duration: 4000,
+                useNativeDriver: false,
+            }),
+
+        ]
+    }
+
+    useEffect(() => {
+
+            Animated.loop(
+
+                Animated.sequence([
+                    Animated.parallel([
+                        Animated.parallel(setEndPoint(position1.left, position1.top, 67, -50)),
+                        Animated.parallel(setEndPoint(position2.left, position2.top, 37, 100))
+                    ]),
+                    Animated.parallel(setEndPoint(position2.left, position2.top, 78, -50)),
+
+            ])
+            ).start()
+    }, []);
+    //車ムービー_ここまで_______________________________________
+
     const playSound = async () => {
         console.log('load　sound')
         if (isJam) {
@@ -192,20 +238,48 @@ export default function Sec1_Wait()  {
 
     return (
         <View style={styles.container}>
-            <Video
-                source={require('../../assets/movies/sec1_wait.mp4')}
-                style={{ width: '70%', height: '40%' }}
-                useNativeControls={false} // react-native-video の controls={false} に相当
-                isLooping // react-native-video の repeat={true} に相当
-            />
-            <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
-                    color="pink" accessibilityLabel="button"/>
+            <Image style={{width: '100%', height:'100%'}}
+                   source={require('../../assets/images/sec1_wait.png')}/>
 
-            <View style={thisStyles.overlay}>
-                <Text style={thisStyles.overlayText}>待機中...</Text>
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    top: position1.top,
+                    left: position1.left,
+                }}
+            >
+                <Image style={{width:horizontalScale(27)}}
+                       resizeMode='contain'
+                       source={require('../../assets/images/cars/car3_1.png')}/>
+            </Animated.View>
+
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    top: position2.top,
+                    left: position2.left,
+                }}>
+                <Image style={{width:horizontalScale(27)}}
+                       resizeMode='contain'
+                       source={require('../../assets/images/cars/car3_1.png')}/>
+            </Animated.View>
+
+
+            {/*<Video*/}
+            {/*    source={require('../../assets/movies/sec1_wait.mp4')}*/}
+            {/*    style={{ width: '70%', height: '40%' }}*/}
+            {/*    useNativeControls={false} // react-native-video の controls={false} に相当*/}
+            {/*    isLooping // react-native-video の repeat={true} に相当*/}
+            {/*/>*/}
+            <View style={{position:'absolute', top:'10%', backgroundColor:'yellow'}}>
+            <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
+                    color="red" accessibilityLabel="button"/>
+            </View>
+            {/*<View style={thisStyles.overlay}>*/}
+            {/*    <Text style={thisStyles.overlayText}>待機中...</Text>*/}
                 {/*<Text style={[thisStyles.overlayText,{top:'50%',fontSize: 20}]}>jam: {String(isJam)}/ rec: {String(isReording)}</Text>*/}
 
-            </View>
+            {/*</View>*/}
             {/*<View style={thisStyles.jamText}>*/}
                 <View style={[thisStyles.jamArea, { opacity: isJam ? 1:0 }]}>
                     <View style={thisStyles.jamArea2}>
