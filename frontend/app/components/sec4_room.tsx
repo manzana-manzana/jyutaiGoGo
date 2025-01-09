@@ -47,14 +47,19 @@ export default function Sec4_Room()  {
     const [myNum, setMyNum]= useState<number>(0)
     const [isRoom,setIsRoom]= useState<boolean>(false)
     const [isCompReading, setIsCompReading] = useState<boolean>(false)
+    const [maxNum, setMaxNum] = useState(6)
+    const [isFirst, setIsFirst] = useState(true)
+    const [existsCars, setExistsCars] = useState(0)
+    const [differenceCars, setDifferenceCars]= useState(0)
+    // const [isReturn, setIsReturn] = useState(false)
 
-    const placeMultipleCars = (startNum:number) => {
-        console.log('placeMultipleCars---',startNum)
+    const placeMultipleCars = () => {
+        console.log('placeMultipleCars---')
         const getCarNoArray: number[] = carNoArray.slice()
         const getCarFileArray: string[] = carFileArray.slice()
         setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)//ユーザー車位置は参加者3人までなら2、4人以上なら4
 
-        for (let i = startNum; i <= roomInNumberOfPeople; i++) {
+        for (let i = 1; i <= maxNum; i++) {
             let carNo = 0
             while (carNo === 0) {
                 const getNo = Math.floor(Math.random() * 8) + 1;
@@ -75,18 +80,20 @@ export default function Sec4_Room()  {
 
     // 初期位置
     const [positions, setPositions] = useState(
-        new Array(7).fill(0).map((value,index) => ({
+        new Array(maxNum).fill(0).map((value,index) => ({
             top: new Animated.Value(Number.isInteger(index/2)?
                 verticalScale(28):verticalScale(38)),
-            left: new Animated.Value(Number.isInteger(index/2)?
-                horizontalScale(100):horizontalScale(100)),
-            zIndex: roomInNumberOfPeople - index + 1
+            left: new Animated.Value(horizontalScale(100)),
+                // Number.isInteger(index/2)?
+                // horizontalScale(100):horizontalScale(100)),
+            zIndex: maxNum - index + 1
         }))
     );
 
-    const moveImagesSequentially = () => {
-        console.log('moveImagesSequentially---')
-        const animations = positions.map((position, index) => {
+    const moveImagesSequentially = (isReturn:boolean) => {
+        console.log('moveImagesSequentially---',existsCars,'台')
+
+        const animations = positions.slice(0,roomInNumberOfPeople).map((position, index) => {
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(Number.isInteger(index/2)?
@@ -105,14 +112,55 @@ export default function Sec4_Room()  {
             ]);
         });
 
-        Animated.stagger(1000, animations).start();
+        const returnAnimations =  positions.map((position, index) => {
+            return Animated.parallel([
+                Animated.timing(position.left, {
+                    toValue: horizontalScale(100),
+                    duration: 10,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(position.top, {
+                    toValue: Number.isInteger(index/2)? verticalScale(28):verticalScale(38),
+                    duration: 10,
+                    useNativeDriver: false,
+                })
+            ]);
+        });
+
+        const endAnimations =  positions.slice(0,existsCars).map((position, index) => {
+            return Animated.parallel([
+                Animated.timing(position.left, {
+                    toValue: horizontalScale(-50),
+                    duration: 1000,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(position.top, {
+                    toValue: Number.isInteger(index/2)? verticalScale(67):verticalScale(78),
+                    duration: 1000,
+                    useNativeDriver: false,
+                })
+            ]);
+        });
+
+        if(isReturn){
+            console.log('return')
+            Animated.sequence([
+                Animated.stagger(100, endAnimations),
+                Animated.stagger(0, returnAnimations),
+                Animated.stagger(1000, animations)
+                ]).start();
+        }else {
+            Animated.stagger(1000, animations).start();
+        }
         console.log('is-2-',isRoom)
+
+        // setIsReturn(false)
     };
 
     useEffect(() => {
         console.log('effect----------')
-            // placeMultipleCars(1)
-            // moveImagesSequentially();
+            placeMultipleCars()
+            moveImagesSequentially(false);
 
             //ここあとで制御変更する⭐️通話開始したら切り替え
             setTimeout(()=>{
@@ -121,27 +169,28 @@ export default function Sec4_Room()  {
             setTimeout(()=>{
                     setIsRoom(true)}
                 ,(roomInNumberOfPeople + 3) * 1000)
-
+        // setTargetCars(roomInNumberOfPeople)
+        setExistsCars(roomInNumberOfPeople)
     }, []);
 
     useEffect(() => {
-        console.log('人数変更',roomInNumberOfPeople,'元人数',carFileArray.length)
-            if(roomInNumberOfPeople < carFileArray.length) {
-                //人数減少
-                console.log('down')
-                const getCarNoArray: number[] = carNoArray.slice(0,roomInNumberOfPeople)
-                const getCarFileArray: string[] = carFileArray.slice(0,roomInNumberOfPeople)
-                setCarNoArray(getCarNoArray)
-                setCarFileArray(getCarFileArray)
-                setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)
-                moveImagesSequentially();
-            }else {
-                //人数増加
-                console.log('up')
-                placeMultipleCars(carFileArray.length + 1)
-                moveImagesSequentially();
-            }
 
+        if(!isFirst) {
+            console.log('人数変更', roomInNumberOfPeople, '元人数', carFileArray.length, '/ position:', positions.length)
+            // setIsReturn(true)
+            // if(roomInNumberOfPeople < existsCars){
+
+                setDifferenceCars(existsCars - roomInNumberOfPeople)
+            // }else{
+            //     setDifferenceCars(0)
+            // }
+
+            moveImagesSequentially(true);
+            setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)
+        }
+        // setTargetCars(roomInNumberOfPeople)
+        setIsFirst(false)
+        setExistsCars(roomInNumberOfPeople)
     }, [roomInNumberOfPeople]);
 
     const startExit = ()=>{
@@ -174,16 +223,17 @@ export default function Sec4_Room()  {
                    source={require('../../assets/images/sec4_room.png')}/>
 
             <View style={{position:'absolute', top:'65%',left:'50%',backgroundColor:'yellow'}}>
-                <Button title='人数を増やす' onPress={()=>{setRoomInNumberOfPeople(roomInNumberOfPeople+1)}}
+                <Button title='人数を増やす' onPress={()=>{roomInNumberOfPeople<=5?setRoomInNumberOfPeople(roomInNumberOfPeople+1):''}}
                         color="red" accessibilityLabel="button"/></View>
 
             <View style={{position:'absolute', top:'70%',left:'50%', backgroundColor:'skyblue'}}>
-                <Button title='人数をへらす' onPress={()=>{setRoomInNumberOfPeople(roomInNumberOfPeople-1)}}
+                <Button title='人数をへらす' onPress={()=>
+                    {setRoomInNumberOfPeople(roomInNumberOfPeople-1)}}
                         color="red" accessibilityLabel="button"/></View>
 
             <View style={[{opacity: isRoom ? 1:0},thisStyles.main]}>
                 <Pressable style={thisStyles.button} onPress={startExit} >
-                    <Text style={thisStyles.buttonText}>退出</Text>
+                    <Text style={thisStyles.buttonText}>退出{String(existsCars)}/{String(differenceCars)}</Text>
                 </Pressable>
                 <View style={thisStyles.peopleArea}>
                     <Text style={thisStyles.peopleText1}>現在</Text>
@@ -229,7 +279,8 @@ export default function Sec4_Room()  {
             </View>
 
             {/*{positions.map((position, index) => (*/}
-            {carFileArray.map((carFile, index) => (
+            {carFileArray.slice(0,roomInNumberOfPeople+ (differenceCars>0?differenceCars:0))
+                .map((carFile, index) => (
                 <Animated.View
                     key={index}
                     style={{
@@ -240,7 +291,8 @@ export default function Sec4_Room()  {
                     }}
                 >
                     <Image
-                        source={carImages[`${carFile}${!isRoom || index === myNum ? 1 : 0}`]}
+                        source={carImages[`${carFile}${!isRoom || 
+                            index === ((roomInNumberOfPeople + (differenceCars<0? differenceCars:0))<=2?1:3) ? 1 : 0}`]}
                         // source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
                         style={{ width: horizontalScale(25) }}
                         resizeMode='contain'
