@@ -107,7 +107,7 @@ export default function Sec4_Room()  {
     useEffect(() => {
         console.log('effect----------')
             placeMultipleCars()
-            moveImagesSequentially(1);
+            moveImagesSequentially();
 
             //ここあとで制御変更する⭐️通話開始したら切り替え
             setTimeout(()=>{
@@ -219,8 +219,8 @@ export default function Sec4_Room()  {
                     }}
                 >
                     <Image
-                        // source={require(`../../assets/images/cars/car8_1.png`)}
-                        source={carImages[`${carFileArray[index]}${!isRoom || index===myNum ? 1 : 0}`]}
+                        source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
+                        // source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
                         style={{ width: horizontalScale(25) }}
                         resizeMode='contain'
                     />
