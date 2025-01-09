@@ -1,4 +1,5 @@
 import { atom } from "jotai";
+import { BASE_URL } from "@/config";
 
 // ユーザーデータ型定義
 type User = {
@@ -15,7 +16,7 @@ type Groups = {
 export const uriAtom = atom<any>(null);
 
 // APIパス
-export const apiAddressAtom = atom<string>(`http://192.168.1.2:2929`);
+export const apiAddressAtom = atom<string>(BASE_URL);
 
 // 表示screen
 export const screenAtom = atom<string>("sec0_1");
