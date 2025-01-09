@@ -28,7 +28,7 @@ export const isJamAtom = atom<boolean>(false);
 export const isTalkAtom = atom<boolean>(false);
 
 // ルーム内の人数
-export const roomInNumberOfPeopleAtom = atom<number>(1);
+export const roomInNumberOfPeopleAtom = atom<number>(6);
 
 // ユーザーのuuid
 export const clientIdAtom = atom<string | null>(null);

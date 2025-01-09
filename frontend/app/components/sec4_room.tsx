@@ -28,6 +28,9 @@ const carImages = {
     c7_1:require(`../../assets/images/cars/car7_1.png`),
     c8_0:require(`../../assets/images/cars/car8_0.png`),
     c8_1:require(`../../assets/images/cars/car8_1.png`),
+    cw_1:require(`../../assets/images/cars/car_wait_1.png`),
+    cw_2:require(`../../assets/images/cars/car_wait_2.png`),
+    cw_3:require(`../../assets/images/cars/car_wait_3.png`),
 }
 
 export default function Sec4_Room()  {
@@ -80,13 +83,15 @@ export default function Sec4_Room()  {
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(Number.isInteger(index/2)?
-                        Math.floor(10 + Math.floor(index/2) * 21.5): Math.floor(22+ Math.floor(index/2) * 21.5)),
+                        Math.floor(14 + Math.floor(index/2) * 18.5):
+                        Math.floor(32+ Math.floor(index/2) * 18.5)),
                     duration: 1000,
                     useNativeDriver: false,
                 }),
                 Animated.timing(position.top, {
                     toValue: verticalScale(Number.isInteger(index/2)?
-                        Math.floor(52 - Math.floor(index/2) * 5.5): Math.floor(59 - Math.floor(index/2) * 5.5)),
+                        Math.floor(51 - Math.floor(index/2) * 5):
+                        Math.floor(56 - Math.floor(index/2) * 5)),
                     duration: 1000,
                     useNativeDriver: false,
                 })
@@ -100,9 +105,11 @@ export default function Sec4_Room()  {
     useEffect(() => {
             placeMultipleCars()
             moveImagesSequentially();
-            setTimeout(()=>{
-                setIsRoom(true)}
-                ,(roomInNumberOfPeople + 1) * 1000)
+
+            //ここあとで制御変更する⭐️通話開始したら切り替え
+            // setTimeout(()=>{
+            //     setIsRoom(true)}
+            //     ,(roomInNumberOfPeople + 1) * 1000)
 
             console.log('is--end-', isRoom)
 
@@ -134,7 +141,6 @@ export default function Sec4_Room()  {
     return (
         <View style={styles.container}>
             <Image style={{width: '100%', height:'100%'}}
-                   resizeMode='contain'
                    source={require('../../assets/images/sec4_room.png')}/>
 
             <View style={[{opacity: isRoom ? 1:0},thisStyles.main]}>
@@ -156,18 +162,18 @@ export default function Sec4_Room()  {
                 <View style={thisStyles.waitArea2}></View>
 
                 <Image
-                    source={carImages[`c6_0`]}
-                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(59), left: horizontalScale(-14)}}
+                    source={carImages[`cw_1`]}
+                    style={{ width: horizontalScale(25) , position:'absolute', top: verticalScale(57), left: horizontalScale(-6)}}
                     resizeMode='contain'
                 />
                 <Image
-                    source={carImages[`c7_0`]}
-                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(65), left: horizontalScale(1)}}
+                    source={carImages[`cw_2`]}
+                    style={{ width: horizontalScale(25) , position:'absolute', top: verticalScale(62), left: horizontalScale(12)}}
                     resizeMode='contain'
                 />
                 <Image
-                    source={carImages[`c8_0`]}
-                    style={{ width: horizontalScale(27) , position:'absolute', top: verticalScale(70), left: horizontalScale(-20)}}
+                    source={carImages[`cw_3`]}
+                    style={{ width: horizontalScale(25) , position:'absolute', top: verticalScale(67), left: horizontalScale(-7)}}
                     resizeMode='contain'
                 />
             </View>
@@ -185,7 +191,7 @@ export default function Sec4_Room()  {
                     <Image
                         // source={require(`../../assets/images/cars/car8_1.png`)}
                         source={carImages[`${carFileArray[index]}${!isRoom || index===myNum ? 1 : 0}`]}
-                        style={{ width: horizontalScale(27) }}
+                        style={{ width: horizontalScale(25) }}
                         resizeMode='contain'
                     />
                 </Animated.View>
