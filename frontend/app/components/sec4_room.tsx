@@ -43,8 +43,8 @@ export default function Sec4_Room()  {
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
     const [carNoArray, setCarNoArray] = useState<number[]>([])
-    const [carFileArray, setCarFileArray] = useState<string[]>([])
-    const [myNum, setMyNum]= useState<number>(0)
+    const [carFileArray, setCarFileArray] = useState<string[][]>([])
+    // const [myNum, setMyNum]= useState<number>(0)
     const [isRoom,setIsRoom]= useState<boolean>(false)
     const [isCompReading, setIsCompReading] = useState<boolean>(false)
     const [maxNum, setMaxNum] = useState(6)
@@ -55,10 +55,10 @@ export default function Sec4_Room()  {
 
     const placeMultipleCars = () => {
         console.log('placeMultipleCars---')
-        const getCarNoArray: number[] = carNoArray.slice()
-        const getCarFileArray: string[] = carFileArray.slice()
-        setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)//ユーザー車位置は参加者3人までなら2、4人以上なら4
+        const getCarNoArray: number[] = []//carNoArray.slice()
+        const getCarFileArray: string[][] = []//carFileArray.slice()
 
+        const myNum = (roomInNumberOfPeople <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
         for (let i = 1; i <= maxNum; i++) {
             let carNo = 0
             while (carNo === 0) {
@@ -68,9 +68,11 @@ export default function Sec4_Room()  {
                     getCarNoArray.push(getNo)
                 }
             }
-            const carFileName = `c${carNo}_`
-            // const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
-            getCarFileArray.push(carFileName)
+
+            const carFileNameBefore = `c${carNo}_1`
+            const  carFileNameAfter = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
+                // const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
+            getCarFileArray.push([carFileNameBefore,carFileNameAfter])
         }
         console.log('is--',isRoom)
         console.log(getCarNoArray)
@@ -128,6 +130,7 @@ export default function Sec4_Room()  {
         });
 
         const endAnimations =  positions.slice(0,existsCars).map((position, index) => {
+
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(-50),
@@ -144,11 +147,16 @@ export default function Sec4_Room()  {
 
         if(isReturn){
             console.log('return')
-            Animated.sequence([
-                Animated.stagger(100, endAnimations),
-                Animated.stagger(0, returnAnimations),
-                Animated.stagger(1000, animations)
-                ]).start();
+            const returnAnimated = ()=> {
+                Animated.sequence([
+                    Animated.stagger(100, endAnimations),
+                    Animated.stagger(0, returnAnimations),
+                ]).start(() => {
+                    placeMultipleCars()
+                    Animated.stagger(1000, animations).start()
+                });
+            }
+            returnAnimated()
         }else {
             Animated.stagger(1000, animations).start();
         }
@@ -174,7 +182,7 @@ export default function Sec4_Room()  {
     }, []);
 
     useEffect(() => {
-
+console.log('-------------------')
         if(!isFirst) {
             console.log('人数変更', roomInNumberOfPeople, '元人数', carFileArray.length, '/ position:', positions.length)
             // setIsReturn(true)
@@ -186,7 +194,7 @@ export default function Sec4_Room()  {
             // }
 
             moveImagesSequentially(true);
-            setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)
+            // setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)
         }
         // setTargetCars(roomInNumberOfPeople)
         setIsFirst(false)
@@ -205,6 +213,7 @@ export default function Sec4_Room()  {
                     setIsTalk(false)
                     setIsRoom(false)
                     setIsCompReading(false)
+                    setIsFirst(true)
                     clearInterval(countDownTimer)
                     console.log("timer_end__")
                 }else{
@@ -291,8 +300,10 @@ export default function Sec4_Room()  {
                     }}
                 >
                     <Image
-                        source={carImages[`${carFile}${!isRoom || 
-                            index === ((roomInNumberOfPeople + (differenceCars<0? differenceCars:0))<=2?1:3) ? 1 : 0}`]}
+
+                        source={carImages[`${isCompReading? carFileArray[index][1]: carFileArray[index][0]}`]}
+                            // `${carFile}${?!isRoom
+                        // || index === ((roomInNumberOfPeople + (differenceCars<0? differenceCars:0))<=3?1:3) ? 1 : 0}`]}
                         // source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
                         style={{ width: horizontalScale(25) }}
                         resizeMode='contain'
