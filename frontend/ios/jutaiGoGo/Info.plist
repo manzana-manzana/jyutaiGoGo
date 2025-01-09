@@ -58,7 +58,7 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>このアプリでは現在地を取得してサービスを提供します。</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>The purpose of using the microphone, for example, for a call or live interactive streaming.</string>
+    <string>このアプリはマイクを使用します。</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
