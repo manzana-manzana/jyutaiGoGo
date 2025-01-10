@@ -4,7 +4,7 @@ import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GroupUsersByLocation from "./../components/GroupUsersByLocation";
 import { useAtom } from "jotai";
-import { locationAtom, clientIdAtom } from "./../atom";
+import { locationAtom, clientIdAtom } from "../atom";
 import { BASE_URL } from "@/config";
 
 export default function App() {

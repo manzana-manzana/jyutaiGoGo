@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { useAtom, useAtomValue } from "jotai";
-import { usersAtom, groupsAtom, locationAtom } from "./../atom";
+import { usersAtom, groupsAtom, locationAtom } from "../atom";
 import { BASE_URL } from "@/config";
 
 // ユーザーデータ型定義

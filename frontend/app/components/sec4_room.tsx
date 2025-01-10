@@ -3,55 +3,24 @@ import {Image, Pressable, StyleSheet, Text, View, Animated, Button, ImageSourceP
 import {styles} from "@/app/style";
 import Metrics from './metrics'
 const {horizontalScale, verticalScale, moderateScale} = Metrics
-import {isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
-
+import {carImagesAtom, isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
 import {useAtom} from "jotai/index";
-
 import { LinearGradient } from 'expo-linear-gradient';
-
-type CarImages = {
-    [key: string]: ImageSourcePropType;
-};
-const carImages:CarImages = {
-    c1_0:require(`../../assets/images/cars/car1_0.png`),
-    c1_1:require(`../../assets/images/cars/car1_1.png`),
-    c2_0:require(`../../assets/images/cars/car2_0.png`),
-    c2_1:require(`../../assets/images/cars/car2_1.png`),
-    c3_0:require(`../../assets/images/cars/car3_0.png`),
-    c3_1:require(`../../assets/images/cars/car3_1.png`),
-    c4_0:require(`../../assets/images/cars/car4_0.png`),
-    c4_1:require(`../../assets/images/cars/car4_1.png`),
-    c5_0:require(`../../assets/images/cars/car5_0.png`),
-    c5_1:require(`../../assets/images/cars/car5_1.png`),
-    c6_0:require(`../../assets/images/cars/car6_0.png`),
-    c6_1:require(`../../assets/images/cars/car6_1.png`),
-    c7_0:require(`../../assets/images/cars/car7_0.png`),
-    c7_1:require(`../../assets/images/cars/car7_1.png`),
-    c8_0:require(`../../assets/images/cars/car8_0.png`),
-    c8_1:require(`../../assets/images/cars/car8_1.png`),
-    cw_1:require(`../../assets/images/cars/car_wait_1.png`),
-    cw_2:require(`../../assets/images/cars/car_wait_2.png`),
-    cw_3:require(`../../assets/images/cars/car_wait_3.png`),
-    cb_0:require(`../../assets/images/bubbles/b0.png`),
-    cb_1:require(`../../assets/images/bubbles/b1.png`),
-    cb_2:require(`../../assets/images/bubbles/b2.png`),
-    cb_3:require(`../../assets/images/bubbles/b3.png`),
-    cb_4:require(`../../assets/images/bubbles/b4.png`),
-    cb_5:require(`../../assets/images/bubbles/b5.png`),
-    cb_6:require(`../../assets/images/bubbles/b6.png`),
-    cb_7:require(`../../assets/images/bubbles/b7.png`),
-    cb_8:require(`../../assets/images/bubbles/b8.png`),
-
-}
+import {useAtomValue} from "jotai";
 
 type Person = {uuid: string,username: string,isMe: boolean};
 type Members = {uuid: string, username: string, isMe: boolean,
     carNo: number, beforeFile:string, afterFile:string}
+type CarImages = {
+    [key: string]: ImageSourcePropType;
+};
 
 export default function Sec4_Room()  {
     // const [roomInNumberOfPeople,setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom)
     const [isJam, setIsJam] = useAtom(isJamAtom)
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
+    const carImages = useAtomValue<CarImages>(carImagesAtom)
+
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
     const [isRoom,setIsRoom]= useState<boolean>(false)//true：トーク開始

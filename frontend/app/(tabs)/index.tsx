@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 
 import { PermissionsAndroid, Platform, View,Image } from 'react-native';
-import {useAtom, useSetAtom} from "jotai";
-import {isTalkAtom, screenAtom} from "@/app/atom";
+import {useAtom, useAtomValue, useSetAtom} from "jotai";
+import { isTalkAtom, screenAtom} from "@/app/atom";
 
 import {styles} from "@/app/style";
 import Sec3_Read from "@/app/components/sec3_read"
@@ -17,7 +17,6 @@ export default function HomeScreen()  {
   const [isTalk, setIsTalk] = useAtom(isTalkAtom)
 
 
-
   useEffect(() => {
     switch (screen){
       case 'sec0_1':
@@ -27,13 +26,13 @@ export default function HomeScreen()  {
       break;
       case 'sec0_2':
         setTimeout(() => {
-          setScreen('sec0_3')
+            setScreen('sec0_3')
         }, 2000);
         break;
       case 'sec0_3':
         setTimeout(() => {
           setScreen('sec1')
-        }, 5000);
+        }, 6000);
         break;
       case 'sec1':
         if(isTalk){
