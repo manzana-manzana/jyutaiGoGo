@@ -96,7 +96,7 @@ export default function Sec4_Room()  {
         // console.log('isFirst',isFirst)
         // console.log('新規メンバー',newMembers.length,'人',newMembers)
 
-        // const myNum = (roomInNumberOfPeople <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
+
         // for (let i = 1; i <= maxNum; i++) {
         //新規メンバーの情報追加
         newMembers.forEach((obj)=>{
@@ -126,7 +126,23 @@ export default function Sec4_Room()  {
         // setCarFileArray(getCarFileArray)
         // setCarNoArray(getCarNoArray)
         // console.log(getMembersArray.length,'人　',getMembersArray)
-        setMembers(getMembersArray)
+        const sortArray:Members[] = []
+        let addIndex = 0
+        for(let i=0; i< getMembersArray.length; i++){
+        // getMembersArray.forEach((obj, index)=>{
+            const myNum = (peopleAtom.length <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
+
+            if(i + 1 === myNum){
+                sortArray.push(getMembersArray.filter(member => member.isMe)[0])
+            }else{
+                console.log(addIndex)
+                sortArray.push(getMembersArray.filter(member => !member.isMe)[addIndex])
+                addIndex++
+            }
+
+        }
+        console.log('sortArray',sortArray)
+        setMembers(sortArray)
     }
 
     // 初期位置
