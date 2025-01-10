@@ -164,7 +164,7 @@ export default function Sec4_Room()  {
             left: new Animated.Value(horizontalScale(100)),
                 // Number.isInteger(index/2)?
                 // horizontalScale(100):horizontalScale(100)),
-            zIndex: maxNum - index + 1
+            zIndex: 100 - index + 1
         }))
     );
 
@@ -204,7 +204,7 @@ export default function Sec4_Room()  {
                 })
             ]);
         });
-//existscars
+
         const endAnimations =  positions.slice(0,maxNum).map((position, index) => {
             console.log('endAnimation',existsCars)
             return Animated.parallel([
@@ -232,6 +232,15 @@ export default function Sec4_Room()  {
 
                     Animated.stagger(1000, animations).start(()=>{
                         setIsDisplayName(true)
+
+                        //ここあとで制御変更する⭐️通話開始したら切り替え
+                        // setTimeout(()=>{
+                        //         setIsCompReading(true)}
+                        //     , 1000)
+                        // setTimeout(()=> {
+                        //     setIsRoom(true)
+                        //
+                        // },3000)
                     })
                 });
             }
@@ -239,6 +248,8 @@ export default function Sec4_Room()  {
         }else {
             Animated.stagger(1000, animations).start(()=>{
                 setIsDisplayName(true)
+                setIsCompReading(true)
+                setIsRoom(true)
             });
         }
         console.log('is-2-',isRoom)
@@ -252,14 +263,7 @@ export default function Sec4_Room()  {
             placeMultipleCars()
             moveImagesSequentially(false);
 
-            //ここあとで制御変更する⭐️通話開始したら切り替え
-            setTimeout(()=>{
-                    setIsCompReading(true)}
-                ,(members.length + 1) * 1000)
-            setTimeout(()=> {
-                setIsRoom(true)
 
-            },(members.length + 3) * 1000)
         // setTargetCars(roomInNumberOfPeople)
         setExistsCars(members.length)
     }, []);
@@ -366,7 +370,9 @@ console.log('-------------------')
                     style={thisStyles.waitArea}
                 />
                 <LinearGradient
-                    // Background Linear Gradient
+                    // Background Line
+                    //
+                    // ar Gradient
                     colors={['rgba(217,217,217,0.7)','rgba(217,217,217,0)']}
                     end={{ x: 0.5, y: 0.75 }}
                     style={thisStyles.waitArea2}
