@@ -1,17 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View, Animated, Dimensions, Button, ImageSourcePropType} from 'react-native';
+import {Image, Pressable, StyleSheet, Text, View, Animated, Button, ImageSourcePropType} from 'react-native';
 import {styles} from "@/app/style";
-// import {moderateScale} from "react-native-size-matters";
 import Metrics from './metrics'
 const {horizontalScale, verticalScale, moderateScale} = Metrics
 import {isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
-import {useAtomValue} from "jotai";
+
 import {useAtom} from "jotai/index";
-// import LinearGradient from 'react-native-linear-gradient';
-// import Animated from "react-native-reanimated";
+
 import { LinearGradient } from 'expo-linear-gradient';
-import {getMediaPlayerCacheManager} from "react-native-agora";
-// import addCustomEqualityTester = jasmine.addCustomEqualityTester;
 
 type CarImages = {
     [key: string]: ImageSourcePropType;
@@ -52,25 +48,17 @@ type Person = {uuid: string,username: string,isMe: boolean};
 type Members = {uuid: string, username: string, isMe: boolean,
     carNo: number, beforeFile:string, afterFile:string}
 
-
-
-const addAtom = {uuid:'u444', username:'マイク', isMe:false}
-
 export default function Sec4_Room()  {
     // const [roomInNumberOfPeople,setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom)
     const [isJam, setIsJam] = useAtom(isJamAtom)
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
-    // const [carNoArray, setCarNoArray] = useState<number[]>([])
-    // const [carFileArray, setCarFileArray] = useState<string[][]>([])
-    // const [myNum, setMyNum]= useState<number>(0)
-    const [isRoom,setIsRoom]= useState<boolean>(false)
-    const [isCompReading, setIsCompReading] = useState<boolean>(false)
+    const [isRoom,setIsRoom]= useState<boolean>(false)//true：トーク開始
+    const [isCompReading, setIsCompReading] = useState<boolean>(false)//true:読み込み完了(メッセージ変更用)
     const [maxNum, setMaxNum] = useState(6)
     const [isFirst, setIsFirst] = useState(true)
     const [existsCars, setExistsCars] = useState(0)
-    const [differenceCars, setDifferenceCars]= useState(0)
     const [members, setMembers]= useState<Members[]>([])
     const [isDisplayName, setIsDisplayName] = useState<boolean>(false)
 
@@ -79,8 +67,8 @@ export default function Sec4_Room()  {
         {uuid:'u11111', username:'たろう', isMe:false},
         {uuid:'u22222', username:'しげりんご', isMe:true},
         {uuid:'u33333', username:'ミニオン', isMe:false},
+        {uuid:'u4444', username:'炭治郎', isMe:false},
     ])
-    // const [isReturn, setIsReturn] = useState(false)
 
     const placeMultipleCars = () => {
         console.log('placeMultipleCars-start--')
@@ -126,10 +114,12 @@ export default function Sec4_Room()  {
                 sortArray.push(getMembersArray.filter(member => !member.isMe)[addIndex])
                 addIndex++
             }
-
         }
+        sortArray.forEach((value, index) => {
+            console.log(value);
+        });
         setMembers(sortArray)
-        console.log('placeMultipleCars-end--',sortArray.length)
+        console.log('----placeMultipleCars-end--',sortArray.length,'人/members')
     }
 
     // 初期位置
@@ -138,14 +128,12 @@ export default function Sec4_Room()  {
             top: new Animated.Value(Number.isInteger(index/2)?
                 verticalScale(28):verticalScale(38)),
             left: new Animated.Value(horizontalScale(100)),
-                // Number.isInteger(index/2)?
-                // horizontalScale(100):horizontalScal e(100)),
             zIndex: Number.isInteger(index/2)? (maxNum - index + 1):(maxNum - index + 1)*2
         }))
     );
 
     const moveImagesSequentially = (isReturn:boolean) => {
-        console.log('moveImagesSequentially---',peopleAtom.length,'台')
+        console.log('moveImagesSequentially-start--','exists',existsCars,'台 / numbers', members.length,'台','perople',peopleAtom.length)
 
         const animations = positions.slice(0,peopleAtom.length).map((position, index) => {
             return Animated.parallel([
@@ -166,22 +154,22 @@ export default function Sec4_Room()  {
             ]);
         });
 
-        const returnAnimations =  positions.map((position, index) => {
+        const returnAnimations =  positions.slice(0,existsCars).map((position, index) => {
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(100),
-                    duration: 10,
+                    duration: 0,
                     useNativeDriver: false,
                 }),
                 Animated.timing(position.top, {
                     toValue: Number.isInteger(index/2)? verticalScale(28):verticalScale(38),
-                    duration: 10,
+                    duration: 0,
                     useNativeDriver: false,
                 })
             ]);
         });
 
-        const endAnimations =  positions.slice(0,maxNum).map((position, index) => {
+        const endAnimations =  positions.slice(0,existsCars).map((position, index) => {
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(-50),
@@ -197,54 +185,53 @@ export default function Sec4_Room()  {
         });
 
         if(isReturn){
-            console.log('return')
+            //増減時（車の初期値への戻し必要）
+            console.log('return-start---')
             const returnAnimated = ()=> {
                 Animated.sequence([
                     Animated.stagger(100, endAnimations),
                     Animated.stagger(0, returnAnimations),
                 ]).start(() => {
-                    placeMultipleCars()
-
+                    placeMultipleCars()//車の配列を作りなおし
                     Animated.stagger(1000, animations).start(()=>{
                         setIsDisplayName(true)
-
-                        //ここあとで制御変更する⭐️通話開始したら切り替え
-                        // setTimeout(()=>{
-                        //         setIsCompReading(true)}
-                        //     , 1000)
-                        // setTimeout(()=> {
-                        //     setIsRoom(true)
-                        //
-                        // },3000)
+                        setExistsCars(peopleAtom.length)
+                        console.log('--return-end---')
                     })
                 });
             }
             returnAnimated()
         }else {
+            //初回（初期値への戻し不要）
+            console.log('not return --start')
             Animated.stagger(1000, animations).start(()=>{
-                setIsDisplayName(true)
                 setIsCompReading(true)
-                setIsRoom(true)
+                setTimeout(()=>{
+                    setIsDisplayName(true)
+                    setIsRoom(true)
+                    setExistsCars(peopleAtom.length)
+                    console.log('--not return --end')
+                },2000)
+
             });
         }
-        console.log('is-2-',isRoom)
-        setExistsCars(members.length)
+
         // setIsReturn(false)
+        console.log('----moveImagesSequentially-end--')
     };
 
     useEffect(() => {
-        console.log('effect----------')
+        console.log('effect-------------------------------')
         setIsDisplayName(false)
-        placeMultipleCars()
 
         if(isFirst) {
+            //初回
+            placeMultipleCars()
             moveImagesSequentially(false);
 
             setIsFirst(false)
-            setExistsCars(members.length)
         }else{
-            setDifferenceCars(existsCars - members.length)
-
+            //増減時
             moveImagesSequentially(true);
             setIsFirst(false)
         }
@@ -265,7 +252,6 @@ export default function Sec4_Room()  {
                     setIsCompReading(false)
                     setIsFirst(true)
                     clearInterval(countDownTimer)
-                    console.log("timer_end__")
                 }else{
                     countNum--
                     setCount(countNum)
@@ -281,22 +267,21 @@ export default function Sec4_Room()  {
             <Image style={{width: '100%', height:'100%'}}
                    source={require('../../assets/images/sec4_room.png')}/>
 
-            <View style={{position:'absolute', top:'65%',left:'50%',backgroundColor:'yellow'}}>
+            <View style={{position:'absolute', top:'65%',left:'70%',backgroundColor:'yellow'}}>
                 <Button title='人数を増やす' onPress={()=>{
-                    console.log('up')
-                    console.log(members.length)
-                    if (members.length <= 5) {
+                    console.log('⭐️up')
+                    if (peopleAtom.length <= 5) {
                         const random =Math.floor(Math.random() * 1000)
                         setPeopleAtom((prevPeopleAtom) => [...prevPeopleAtom,  {
                             uuid: `u${random}`,username: '追加',isMe: false,
                         }]);
                     }
                 }}
-
                     color="red" accessibilityLabel="button"/></View>
 
-            <View style={{position:'absolute', top:'70%',left:'50%', backgroundColor:'skyblue'}}>
+            <View style={{position:'absolute', top:'70%',left:'70%', backgroundColor:'skyblue'}}>
                 <Button title='人数をへらす' onPress={()=> {
+                    console.log('🩷down')
                     let no =0
                     while(no === 0){
                         const random = Math.floor(Math.random() *  peopleAtom.length)
@@ -306,7 +291,6 @@ export default function Sec4_Room()  {
                     }
                     const newArr = peopleAtom.filter((_, index) => index !== no)
                     setPeopleAtom(newArr)
-
                 }}
                         color="red" accessibilityLabel="button"/></View>
 
@@ -322,25 +306,17 @@ export default function Sec4_Room()  {
             </View>
 
             <View style={[{opacity: isRoom ?0:1},thisStyles.main]}>
-                {/*<View style={thisStyles.waitArea}></View>*/}
                 <LinearGradient
-                    // Background Linear Gradient
                     colors={['rgba(255, 255, 255, 1)','rgba(217,217,217,0.7)']}
                     end={{ x: 0.5, y: 0.75 }}
                     style={thisStyles.waitArea}
                 />
                 <LinearGradient
-                    // Background Line
-                    //
-                    // ar Gradient
                     colors={['rgba(217,217,217,0.7)','rgba(217,217,217,0)']}
                     end={{ x: 0.5, y: 0.75 }}
                     style={thisStyles.waitArea2}
                 />
-
                     <Text style={thisStyles.waitText1}>{isCompReading?'参加しました！': '読み込み中'}</Text>
-                {/*</View>*/}
-                {/*<View style={thisStyles.waitArea2}></View>*/}
 
                 <Image
                     source={carImages[`cw_1`]}
@@ -359,9 +335,6 @@ export default function Sec4_Room()  {
                 />
             </View>
 
-            {/*{positions.map((position, index) => (*/}
-
-            {/*{carFileArray.slice(0,roomInNumberOfPeople+ (differenceCars>0?differenceCars:0))*/}
             {members.map((member, index) => (
                 <Animated.View
                     key={index}
@@ -492,9 +465,6 @@ const thisStyles = StyleSheet.create({
         left:0,
         width: '100%',
         height: verticalScale(36*0.75),
-        // backgroundColor: 'rgba(255, 255, 255, 0.54)',
-        // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
-        // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
         alignItems:'center'
     },
     waitArea2: {
@@ -503,9 +473,6 @@ const thisStyles = StyleSheet.create({
         left:0,
         width: '100%',
         height: verticalScale(36*0.25),
-        // backgroundColor: 'rgba(255, 255, 255, 0.4)',
-        // backgroundColor:'linear-gradient(180deg,#D9D9D9 100%, #FFFFFF 78%)',
-        // backGround: 'linear-gradient(180deg, #D9D9D9 100%, #FFFFFF 78%)',
         alignItems:'center'
     },
     waitText1: {
@@ -523,8 +490,6 @@ const thisStyles = StyleSheet.create({
         left:horizontalScale(1),
         top: verticalScale(-4.5),
         width: horizontalScale(23),
-        // height:verticalScale(4),
-        // backgroundColor:'pink',
         textAlign:'center',
     }
 })

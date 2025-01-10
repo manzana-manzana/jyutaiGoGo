@@ -275,6 +275,10 @@ export default function Sec1_Wait()  {
             <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
                     color="red" accessibilityLabel="button"/>
             </View>
+            <View style={{position:'absolute', top:'15%', backgroundColor:'yellow'}}>
+                <Button title='ルームへ移動' onPress={()=>{setIsTalk(true)}}
+                        color="red" accessibilityLabel="button"/>
+            </View>
 
                 <View style={[thisStyles.jamArea, { opacity: isJam ? 1:0 }]}>
                     <View style={thisStyles.jamArea2}>
