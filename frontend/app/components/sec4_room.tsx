@@ -83,77 +83,53 @@ export default function Sec4_Room()  {
     // const [isReturn, setIsReturn] = useState(false)
 
     const placeMultipleCars = () => {
-        console.log('placeMultipleCars---')
-        // console.log('peopleAtom',peopleAtom)
-        // const getCarNoArray: number[] = []//carNoArray.slice()
-        // const getCarFileArray: string[][] = []//carFileArray.slice()
-
-
+        console.log('placeMultipleCars-start--')
 
         //いなくなったメンバーを削除
         const getMembersArray: Members[] = members.filter(member=>
                     peopleAtom.some(obj => obj.uuid === member.uuid))
-        // console.log('削除メンバーを除いた既存メンバー',getMembersArray)
 
         //新規メンバーを追加
         let newMembers: Person[]=[]
         if(isFirst) {
             newMembers = peopleAtom
         }else{
-                // newMembers = peopleAtom.filter(obj =>
-                // members.some(member => obj.uuid !== member.uuid))
             newMembers = peopleAtom.filter(obj => members.every(member => member.uuid !== obj.uuid))
         }
-        // console.log('isFirst',isFirst)
-        // console.log('新規メンバー',newMembers.length,'人',newMembers)
 
-
-        // for (let i = 1; i <= maxNum; i++) {
         //新規メンバーの情報追加
         newMembers.forEach((obj)=>{
-            // console.log('処理メンバー--',obj)
             //車の色をダブらないように設定
             let carNo = 0
             while (carNo === 0) {
                 const getNo = Math.floor(Math.random() * 8) + 1;
                 if (!getMembersArray.some(member => member.carNo === getNo)) {
-                    // if (!   getCarNoArray.includes(getNo)) {
                     carNo = getNo
-                    // getCarNoArray.push(getNo)
                 }
             }
-// console.log('carNo：',carNo)
+
             const carFileNameBefore = `c${carNo}_1`
-            const  carFileNameAfter = obj.isMe ? `c${carNo}_1` : `c${carNo}_0`
-            // const  carFileNameAfter = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
-                // const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
+            const carFileNameAfter = obj.isMe ? `c${carNo}_1` : `c${carNo}_0`
             getMembersArray.push( {uuid: obj.uuid, username: obj.username, isMe: obj.isMe,
                 carNo: carNo, beforeFile:carFileNameBefore, afterFile:carFileNameAfter})
-                // getCarFileArray    [carFileNameBefore,carFileNameAfter])
         })
-        // }
         console.log('isRoom--',isRoom)
-        // console.log(getCarNoArray)
-        // setCarFileArray(getCarFileArray)
-        // setCarNoArray(getCarNoArray)
-        // console.log(getMembersArray.length,'人　',getMembersArray)
+
         const sortArray:Members[] = []
         let addIndex = 0
         for(let i=0; i< getMembersArray.length; i++){
-        // getMembersArray.forEach((obj, index)=>{
             const myNum = (peopleAtom.length <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
 
             if(i + 1 === myNum){
                 sortArray.push(getMembersArray.filter(member => member.isMe)[0])
             }else{
-                console.log(addIndex)
                 sortArray.push(getMembersArray.filter(member => !member.isMe)[addIndex])
                 addIndex++
             }
 
         }
-        console.log('sortArray',sortArray)
         setMembers(sortArray)
+        console.log('placeMultipleCars-end--',sortArray.length)
     }
 
     // 初期位置
@@ -163,8 +139,8 @@ export default function Sec4_Room()  {
                 verticalScale(28):verticalScale(38)),
             left: new Animated.Value(horizontalScale(100)),
                 // Number.isInteger(index/2)?
-                // horizontalScale(100):horizontalScale(100)),
-            zIndex: 100 - index + 1
+                // horizontalScale(100):horizontalScal e(100)),
+            zIndex: Number.isInteger(index/2)? (maxNum - index + 1):(maxNum - index + 1)*2
         }))
     );
 
@@ -206,7 +182,6 @@ export default function Sec4_Room()  {
         });
 
         const endAnimations =  positions.slice(0,maxNum).map((position, index) => {
-            console.log('endAnimation',existsCars)
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(-50),
@@ -260,36 +235,21 @@ export default function Sec4_Room()  {
     useEffect(() => {
         console.log('effect----------')
         setIsDisplayName(false)
-            placeMultipleCars()
+        placeMultipleCars()
+
+        if(isFirst) {
             moveImagesSequentially(false);
 
-
-        // setTargetCars(roomInNumberOfPeople)
-        setExistsCars(members.length)
-    }, []);
-
-    useEffect(() => {
-console.log('-------------------')
-        if(!isFirst) {
-            setIsDisplayName(false)
-            // console.log('人数変更', roomInNumberOfPeople, '元人数', carFileArray.length, '/ position:', positions.length)
-            // setIsReturn(true)
-            // if(roomInNumberOfPeople < existsCars){
-
-                setDifferenceCars(existsCars - members.length)
+            setIsFirst(false)
+            setExistsCars(members.length)
+        }else{
+            setDifferenceCars(existsCars - members.length)
 
             moveImagesSequentially(true);
-
-            //ここあとで制御変更する⭐️通話開始したら切り替え
-            // setTimeout(()=> {
-            //     setIsDisplayName(true)
-            // },(members.length + 3) * 1000)
-            // setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)
+            setIsFirst(false)
         }
-        // setTargetCars(roomInNumberOfPeople)
-        setIsFirst(false)
-
     }, [peopleAtom]);
+
 
     const startExit = ()=>{
         if(!isExit){
@@ -323,6 +283,8 @@ console.log('-------------------')
 
             <View style={{position:'absolute', top:'65%',left:'50%',backgroundColor:'yellow'}}>
                 <Button title='人数を増やす' onPress={()=>{
+                    console.log('up')
+                    console.log(members.length)
                     if (members.length <= 5) {
                         const random =Math.floor(Math.random() * 1000)
                         setPeopleAtom((prevPeopleAtom) => [...prevPeopleAtom,  {
@@ -335,11 +297,9 @@ console.log('-------------------')
 
             <View style={{position:'absolute', top:'70%',left:'50%', backgroundColor:'skyblue'}}>
                 <Button title='人数をへらす' onPress={()=> {
-                    // setRoomInNumberOfPeople(roomInNumberOfPeople-1)
                     let no =0
                     while(no === 0){
                         const random = Math.floor(Math.random() *  peopleAtom.length)
-                        console.log('random',random)
                         if(!peopleAtom[random].isMe){
                             no=random
                         }
@@ -409,19 +369,19 @@ console.log('-------------------')
                         position: 'absolute',
                         top: positions[index].top,
                         left: positions[index].left,
-                        zIndex: positions[index].zIndex
+                        zIndex:positions[index].zIndex
                     }}
                 >
                     <Image //車
                         source={carImages[`${isCompReading? member.afterFile: member.beforeFile}`]}
-                        style={{ width: horizontalScale(25) }}
+                        style={{ width: horizontalScale(25)}}
                         resizeMode='contain'
                     />
 
-                    <View style={{opacity: isDisplayName ? 1:0, top:verticalScale(-14), left:horizontalScale(2), zIndex:0}}>
+                    <View style={{opacity: isDisplayName ? 1:0, top:verticalScale(-14), left:horizontalScale(2)}}>
                         <Image //吹き出し
                             source={carImages[`cb_${member.isMe? member.carNo: 0}`]}
-                            style={{ width: horizontalScale(25) }}
+                            style={{ width: horizontalScale(25)}}
                             resizeMode='contain'
 
                         />
@@ -566,6 +526,5 @@ const thisStyles = StyleSheet.create({
         // height:verticalScale(4),
         // backgroundColor:'pink',
         textAlign:'center',
-
     }
 })
