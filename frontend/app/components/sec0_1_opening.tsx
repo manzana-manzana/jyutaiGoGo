@@ -39,6 +39,7 @@ const thisStyles = StyleSheet.create({
         position: 'absolute',
         top: verticalScale(29),
         height: verticalScale(42),
+        width:'100%',
         justifyContent: 'space-between',
 
     },

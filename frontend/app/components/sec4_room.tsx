@@ -10,6 +10,8 @@ import {useAtom} from "jotai/index";
 // import LinearGradient from 'react-native-linear-gradient';
 // import Animated from "react-native-reanimated";
 import { LinearGradient } from 'expo-linear-gradient';
+import {getMediaPlayerCacheManager} from "react-native-agora";
+// import addCustomEqualityTester = jasmine.addCustomEqualityTester;
 
 type CarImages = {
     [key: string]: ImageSourcePropType;
@@ -36,14 +38,22 @@ const carImages:CarImages = {
     cw_3:require(`../../assets/images/cars/car_wait_3.png`),
 }
 
+type Person = {uuid: string,username: string,isMe: boolean};
+type Members = {uuid: string, username: string, isMe: boolean,
+    carNo: number, beforeFile:string, afterFile:string}
+
+
+
+const addAtom = {uuid:'u444', username:'マイク', isMe:false}
+
 export default function Sec4_Room()  {
-    const [roomInNumberOfPeople,setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom)
+    // const [roomInNumberOfPeople,setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom)
     const [isJam, setIsJam] = useAtom(isJamAtom)
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
-    const [carNoArray, setCarNoArray] = useState<number[]>([])
-    const [carFileArray, setCarFileArray] = useState<string[][]>([])
+    // const [carNoArray, setCarNoArray] = useState<number[]>([])
+    // const [carFileArray, setCarFileArray] = useState<string[][]>([])
     // const [myNum, setMyNum]= useState<number>(0)
     const [isRoom,setIsRoom]= useState<boolean>(false)
     const [isCompReading, setIsCompReading] = useState<boolean>(false)
@@ -51,33 +61,72 @@ export default function Sec4_Room()  {
     const [isFirst, setIsFirst] = useState(true)
     const [existsCars, setExistsCars] = useState(0)
     const [differenceCars, setDifferenceCars]= useState(0)
+    const [members, setMembers]= useState<Members[]>([])
+
+    //テスト用に配置
+    const [peopleAtom , setPeopleAtom] = useState<Person[]>([
+        {uuid:'u11111', username:'たろう', isMe:false},
+        {uuid:'u22222', username:'しげりんご', isMe:true},
+        {uuid:'u33333', username:'ミニオン', isMe:false},
+    ])
     // const [isReturn, setIsReturn] = useState(false)
 
     const placeMultipleCars = () => {
         console.log('placeMultipleCars---')
-        const getCarNoArray: number[] = []//carNoArray.slice()
-        const getCarFileArray: string[][] = []//carFileArray.slice()
+        console.log('peopleAtom',peopleAtom)
+        // const getCarNoArray: number[] = []//carNoArray.slice()
+        // const getCarFileArray: string[][] = []//carFileArray.slice()
 
-        const myNum = (roomInNumberOfPeople <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
-        for (let i = 1; i <= maxNum; i++) {
+
+
+        //いなくなったメンバーを削除
+        const getMembersArray: Members[] = members.filter(member=>
+                    peopleAtom.some(obj => obj.uuid === member.uuid))
+        console.log('削除メンバーを除いた既存メンバー',getMembersArray)
+
+        //新規メンバーを追加
+        let newMembers: Person[]=[]
+        if(isFirst) {
+            newMembers = peopleAtom
+        }else{
+                // newMembers = peopleAtom.filter(obj =>
+                // members.some(member => obj.uuid !== member.uuid))
+            newMembers = peopleAtom.filter(obj => members.every(member => member.uuid !== obj.uuid))
+        }
+        console.log('isFirst',isFirst)
+        console.log('新規メンバー',newMembers.length,'人',newMembers)
+
+        // const myNum = (roomInNumberOfPeople <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
+        // for (let i = 1; i <= maxNum; i++) {
+        //新規メンバーの情報追加
+        newMembers.forEach((obj)=>{
+            console.log('処理メンバー--',obj)
+            //車の色をダブらないように設定
             let carNo = 0
             while (carNo === 0) {
                 const getNo = Math.floor(Math.random() * 8) + 1;
-                if (!getCarNoArray.includes(getNo)) {
+                if (!getMembersArray.some(member => member.carNo === getNo)) {
+                    // if (!   getCarNoArray.includes(getNo)) {
                     carNo = getNo
-                    getCarNoArray.push(getNo)
+                    // getCarNoArray.push(getNo)
                 }
             }
-
+// console.log('carNo：',carNo)
             const carFileNameBefore = `c${carNo}_1`
-            const  carFileNameAfter = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
+            const  carFileNameAfter = obj.isMe ? `c${carNo}_1` : `c${carNo}_0`
+            // const  carFileNameAfter = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
                 // const carFileName = i === myNum ? `c${carNo}_1` : `c${carNo}_0`
-            getCarFileArray.push([carFileNameBefore,carFileNameAfter])
-        }
-        console.log('is--',isRoom)
-        console.log(getCarNoArray)
-        setCarFileArray(getCarFileArray)
-        setCarNoArray(getCarNoArray)
+            getMembersArray.push( {uuid: obj.uuid, username: obj.username, isMe: obj.isMe,
+                carNo: carNo, beforeFile:carFileNameBefore, afterFile:carFileNameAfter})
+                // getCarFileArray    [carFileNameBefore,carFileNameAfter])
+        })
+        // }
+        console.log('isRoom--',isRoom)
+        // console.log(getCarNoArray)
+        // setCarFileArray(getCarFileArray)
+        // setCarNoArray(getCarNoArray)
+        console.log(getMembersArray.length,'人　',getMembersArray)
+        setMembers(getMembersArray)
     }
 
     // 初期位置
@@ -93,9 +142,9 @@ export default function Sec4_Room()  {
     );
 
     const moveImagesSequentially = (isReturn:boolean) => {
-        console.log('moveImagesSequentially---',existsCars,'台')
+        console.log('moveImagesSequentially---',peopleAtom.length,'台')
 
-        const animations = positions.slice(0,roomInNumberOfPeople).map((position, index) => {
+        const animations = positions.slice(0,peopleAtom.length).map((position, index) => {
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(Number.isInteger(index/2)?
@@ -128,8 +177,8 @@ export default function Sec4_Room()  {
                 })
             ]);
         });
-
-        const endAnimations =  positions.slice(0,existsCars).map((position, index) => {
+//existscars
+        const endAnimations =  positions.slice(0,peopleAtom.length).map((position, index) => {
 
             return Animated.parallel([
                 Animated.timing(position.left, {
@@ -173,22 +222,22 @@ export default function Sec4_Room()  {
             //ここあとで制御変更する⭐️通話開始したら切り替え
             setTimeout(()=>{
                     setIsCompReading(true)}
-                ,(roomInNumberOfPeople + 1) * 1000)
+                ,(members.length + 1) * 1000)
             setTimeout(()=>{
                     setIsRoom(true)}
-                ,(roomInNumberOfPeople + 3) * 1000)
+                ,(members.length + 3) * 1000)
         // setTargetCars(roomInNumberOfPeople)
-        setExistsCars(roomInNumberOfPeople)
+        setExistsCars(members.length)
     }, []);
 
     useEffect(() => {
 console.log('-------------------')
         if(!isFirst) {
-            console.log('人数変更', roomInNumberOfPeople, '元人数', carFileArray.length, '/ position:', positions.length)
+            // console.log('人数変更', roomInNumberOfPeople, '元人数', carFileArray.length, '/ position:', positions.length)
             // setIsReturn(true)
             // if(roomInNumberOfPeople < existsCars){
 
-                setDifferenceCars(existsCars - roomInNumberOfPeople)
+                setDifferenceCars(existsCars - members.length)
             // }else{
             //     setDifferenceCars(0)
             // }
@@ -198,8 +247,8 @@ console.log('-------------------')
         }
         // setTargetCars(roomInNumberOfPeople)
         setIsFirst(false)
-        setExistsCars(roomInNumberOfPeople)
-    }, [roomInNumberOfPeople]);
+        setExistsCars(members.length)
+    }, [peopleAtom]);
 
     const startExit = ()=>{
         if(!isExit){
@@ -232,21 +281,30 @@ console.log('-------------------')
                    source={require('../../assets/images/sec4_room.png')}/>
 
             <View style={{position:'absolute', top:'65%',left:'50%',backgroundColor:'yellow'}}>
-                <Button title='人数を増やす' onPress={()=>{roomInNumberOfPeople<=5?setRoomInNumberOfPeople(roomInNumberOfPeople+1):''}}
-                        color="red" accessibilityLabel="button"/></View>
+                <Button title='人数を増やす' onPress={()=>{
+                    if (members.length <= 5) {
+                        const random =Math.floor(Math.random() * 1000)
+                        setPeopleAtom((prevPeopleAtom) => [...prevPeopleAtom,  {
+                            uuid: `u${random}`,username: '追加',isMe: false,
+                        }]);
+                    }
+                }}
+
+                    color="red" accessibilityLabel="button"/></View>
 
             <View style={{position:'absolute', top:'70%',left:'50%', backgroundColor:'skyblue'}}>
-                <Button title='人数をへらす' onPress={()=>
-                    {setRoomInNumberOfPeople(roomInNumberOfPeople-1)}}
+                <Button title='人数をへらす' onPress={()=> {
+                    // setRoomInNumberOfPeople(roomInNumberOfPeople-1)
+                }}
                         color="red" accessibilityLabel="button"/></View>
 
             <View style={[{opacity: isRoom ? 1:0},thisStyles.main]}>
                 <Pressable style={thisStyles.button} onPress={startExit} >
-                    <Text style={thisStyles.buttonText}>退出{String(existsCars)}/{String(differenceCars)}</Text>
+                    <Text style={thisStyles.buttonText}>退出</Text>
                 </Pressable>
                 <View style={thisStyles.peopleArea}>
                     <Text style={thisStyles.peopleText1}>現在</Text>
-                    <Text style={thisStyles.peopleText2}>{roomInNumberOfPeople}</Text>
+                    <Text style={thisStyles.peopleText2}>{members.length}</Text>
                     <Text style={thisStyles.peopleText3}>名</Text>
                 </View>
             </View>
@@ -288,8 +346,9 @@ console.log('-------------------')
             </View>
 
             {/*{positions.map((position, index) => (*/}
-            {carFileArray.slice(0,roomInNumberOfPeople+ (differenceCars>0?differenceCars:0))
-                .map((carFile, index) => (
+
+            {/*{carFileArray.slice(0,roomInNumberOfPeople+ (differenceCars>0?differenceCars:0))*/}
+            {members.map((member, index) => (
                 <Animated.View
                     key={index}
                     style={{
@@ -301,7 +360,9 @@ console.log('-------------------')
                 >
                     <Image
 
-                        source={carImages[`${isCompReading? carFileArray[index][1]: carFileArray[index][0]}`]}
+                        source={carImages[`${isCompReading? member.afterFile: member.beforeFile}`]}
+                        // source={carImages[`${isCompReading? carFileArray[index][1]: carFileArray[index][0]}`]}
+
                             // `${carFile}${?!isRoom
                         // || index === ((roomInNumberOfPeople + (differenceCars<0? differenceCars:0))<=3?1:3) ? 1 : 0}`]}
                         // source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
