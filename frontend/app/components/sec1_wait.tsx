@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Button, Image, StyleSheet, Text, View} from 'react-native';
+import {Animated, Button, Image, ImageSourcePropType, StyleSheet, Text, View} from 'react-native';
 // import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import Metrics from './metrics'
 const {horizontalScale, verticalScale, moderateScale} = Metrics
@@ -17,24 +17,30 @@ import {number} from "prop-types";
 // import { useAtom, useAtomValue } from "jotai";
 // import {apiAddressAtom, storedAtom, testAtom, uriAtom} from "../atom";
 
-const amiVoice = {
-    recording: null,
+type Ami = {
+    recording: null | Audio.Recording;
+    startRecording: () => void;
+    stopRecording: (apiAddress: string) => Promise<{ isRes: boolean, text: any } | undefined>;
+};
+
+const amiVoice: Ami = {
+    recording: null ,
     startRecording: async function(){
         console.log('-startRecording_________________________')
         this.recording = null
-        const recordingOptions= {
+        const recordingOptions:any = {
             android: {
                 extension: ".wav", // または ".m4a"
-                outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_PCM_16BIT,
-                audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_DEFAULT,
+                // outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_PCM_16BIT,
+                // audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_DEFAULT,
                 sampleRate: 44100,
                 numberOfChannels: 1,
                 bitRate: 128000,
             },
             ios: {
                 extension: ".wav", // または ".m4a"
-                outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_LINEARPCM,
-                audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+                // outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_LINEARPCM,
+                // audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
                 sampleRate: 44100,
                 numberOfChannels: 1,
                 bitRate: 128000,
@@ -57,7 +63,7 @@ const amiVoice = {
         }
     }
     ,
-    stopRecording:async function(apiAddress:string){
+    stopRecording: async function(apiAddress){
         console.log('stopRecording_________________________')
         if (this.recording) {
             await this.recording.stopAndUnloadAsync();
@@ -265,22 +271,11 @@ export default function Sec1_Wait()  {
             </Animated.View>
 
 
-            {/*<Video*/}
-            {/*    source={require('../../assets/movies/sec1_wait.mp4')}*/}
-            {/*    style={{ width: '70%', height: '40%' }}*/}
-            {/*    useNativeControls={false} // react-native-video の controls={false} に相当*/}
-            {/*    isLooping // react-native-video の repeat={true} に相当*/}
-            {/*/>*/}
             <View style={{position:'absolute', top:'10%', backgroundColor:'yellow'}}>
             <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
                     color="red" accessibilityLabel="button"/>
             </View>
-            {/*<View style={thisStyles.overlay}>*/}
-            {/*    <Text style={thisStyles.overlayText}>待機中...</Text>*/}
-                {/*<Text style={[thisStyles.overlayText,{top:'50%',fontSize: 20}]}>jam: {String(isJam)}/ rec: {String(isReording)}</Text>*/}
 
-            {/*</View>*/}
-            {/*<View style={thisStyles.jamText}>*/}
                 <View style={[thisStyles.jamArea, { opacity: isJam ? 1:0 }]}>
                     <View style={thisStyles.jamArea2}>
                     <Text style={thisStyles.jamText1}>
