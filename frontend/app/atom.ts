@@ -4,8 +4,10 @@ import { BASE_URL } from "@/config";
 // ユーザーデータ型定義
 type User = {
   uuid: string;
+  username: string;
   latitude: number;
   longitude: number;
+  isMyAccount: boolean;
 };
 
 type Groups = {
@@ -39,5 +41,8 @@ export const locationAtom = atom<any>(null);
 // ユーザー情報リスト
 export const usersAtom = atom<User[]>([]);
 
-// グループ化されたデータ
+// グループ化された全てのデータ
 export const groupsAtom = atom<Groups>({});
+
+// 通話グループの参加者データ
+export const currentGroupUsersAtom = atom<User[]>([]);

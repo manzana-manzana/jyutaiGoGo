@@ -4,11 +4,19 @@
  */
 exports.up = async function (knex) {
   await knex.schema.createTable("locations", (table) => {
-    table.increments("id").primary(); // ID
-    table.uuid("uuid").unique(); // ユーザーID (重複不可)
+    // table.increments("id").primary();
+    table.integer("user_id").unsigned().notNullable().index(); // 修正箇所
     table.float("latitude").notNullable(); // 緯度
     table.float("longitude").notNullable(); // 経度
     table.timestamp("created_at").defaultTo(knex.fn.now()); // データ記録時刻
+
+    // 外部キー制約を追加
+    table
+      .foreign("user_id")
+      .references("id")
+      .inTable("users")
+      .onDelete("CASCADE") // ユーザーが削除された場合、関連するロケーションも削除
+      .onUpdate("CASCADE"); // ユーザーIDが更新された場合、関連するロケーションの user_id も更新
   });
 };
 
