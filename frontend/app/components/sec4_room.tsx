@@ -36,6 +36,16 @@ const carImages:CarImages = {
     cw_1:require(`../../assets/images/cars/car_wait_1.png`),
     cw_2:require(`../../assets/images/cars/car_wait_2.png`),
     cw_3:require(`../../assets/images/cars/car_wait_3.png`),
+    cb_0:require(`../../assets/images/bubbles/b0.png`),
+    cb_1:require(`../../assets/images/bubbles/b1.png`),
+    cb_2:require(`../../assets/images/bubbles/b2.png`),
+    cb_3:require(`../../assets/images/bubbles/b3.png`),
+    cb_4:require(`../../assets/images/bubbles/b4.png`),
+    cb_5:require(`../../assets/images/bubbles/b5.png`),
+    cb_6:require(`../../assets/images/bubbles/b6.png`),
+    cb_7:require(`../../assets/images/bubbles/b7.png`),
+    cb_8:require(`../../assets/images/bubbles/b8.png`),
+
 }
 
 type Person = {uuid: string,username: string,isMe: boolean};
@@ -62,6 +72,7 @@ export default function Sec4_Room()  {
     const [existsCars, setExistsCars] = useState(0)
     const [differenceCars, setDifferenceCars]= useState(0)
     const [members, setMembers]= useState<Members[]>([])
+    const [isDisplayName, setIsDisplayName] = useState<boolean>(false)
 
     //テスト用に配置
     const [peopleAtom , setPeopleAtom] = useState<Person[]>([
@@ -219,12 +230,16 @@ export default function Sec4_Room()  {
                 ]).start(() => {
                     placeMultipleCars()
 
-                    Animated.stagger(1000, animations).start()
+                    Animated.stagger(1000, animations).start(()=>{
+                        setIsDisplayName(true)
+                    })
                 });
             }
             returnAnimated()
         }else {
-            Animated.stagger(1000, animations).start();
+            Animated.stagger(1000, animations).start(()=>{
+                setIsDisplayName(true)
+            });
         }
         console.log('is-2-',isRoom)
         setExistsCars(members.length)
@@ -233,6 +248,7 @@ export default function Sec4_Room()  {
 
     useEffect(() => {
         console.log('effect----------')
+        setIsDisplayName(false)
             placeMultipleCars()
             moveImagesSequentially(false);
 
@@ -240,9 +256,10 @@ export default function Sec4_Room()  {
             setTimeout(()=>{
                     setIsCompReading(true)}
                 ,(members.length + 1) * 1000)
-            setTimeout(()=>{
-                    setIsRoom(true)}
-                ,(members.length + 3) * 1000)
+            setTimeout(()=> {
+                setIsRoom(true)
+
+            },(members.length + 3) * 1000)
         // setTargetCars(roomInNumberOfPeople)
         setExistsCars(members.length)
     }, []);
@@ -250,16 +267,19 @@ export default function Sec4_Room()  {
     useEffect(() => {
 console.log('-------------------')
         if(!isFirst) {
+            setIsDisplayName(false)
             // console.log('人数変更', roomInNumberOfPeople, '元人数', carFileArray.length, '/ position:', positions.length)
             // setIsReturn(true)
             // if(roomInNumberOfPeople < existsCars){
 
                 setDifferenceCars(existsCars - members.length)
-            // }else{
-            //     setDifferenceCars(0)
-            // }
 
             moveImagesSequentially(true);
+
+            //ここあとで制御変更する⭐️通話開始したら切り替え
+            // setTimeout(()=> {
+            //     setIsDisplayName(true)
+            // },(members.length + 3) * 1000)
             // setMyNum(roomInNumberOfPeople <= 3 ? 1 : 3)
         }
         // setTargetCars(roomInNumberOfPeople)
@@ -386,17 +406,22 @@ console.log('-------------------')
                         zIndex: positions[index].zIndex
                     }}
                 >
-                    <Image
-
+                    <Image //車
                         source={carImages[`${isCompReading? member.afterFile: member.beforeFile}`]}
-                        // source={carImages[`${isCompReading? carFileArray[index][1]: carFileArray[index][0]}`]}
-
-                            // `${carFile}${?!isRoom
-                        // || index === ((roomInNumberOfPeople + (differenceCars<0? differenceCars:0))<=3?1:3) ? 1 : 0}`]}
-                        // source={carImages[`${carFileArray[index]}${!isRoom || index === myNum ? 1 : 0}`]}
                         style={{ width: horizontalScale(25) }}
                         resizeMode='contain'
                     />
+
+                    <View style={{opacity: isDisplayName ? 1:0, top:verticalScale(-14), left:horizontalScale(2), zIndex:0}}>
+                        <Image //吹き出し
+                            source={carImages[`cb_${member.isMe? member.carNo: 0}`]}
+                            style={{ width: horizontalScale(25) }}
+                            resizeMode='contain'
+
+                        />
+                        <Text //名前
+                            style={thisStyles.nameText}>{member.username}</Text>
+                    </View>
                 </Animated.View>
             ))}
 
@@ -525,4 +550,16 @@ const thisStyles = StyleSheet.create({
         position:'absolute',
         top:verticalScale(19)
     },
+
+    nameText:{
+        fontWeight:'bold',
+        fontSize:moderateScale(16),
+        left:horizontalScale(1),
+        top: verticalScale(-4.5),
+        width: horizontalScale(23),
+        // height:verticalScale(4),
+        // backgroundColor:'pink',
+        textAlign:'center',
+
+    }
 })
