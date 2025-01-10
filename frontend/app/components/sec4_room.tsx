@@ -73,7 +73,7 @@ export default function Sec4_Room()  {
 
     const placeMultipleCars = () => {
         console.log('placeMultipleCars---')
-        console.log('peopleAtom',peopleAtom)
+        // console.log('peopleAtom',peopleAtom)
         // const getCarNoArray: number[] = []//carNoArray.slice()
         // const getCarFileArray: string[][] = []//carFileArray.slice()
 
@@ -82,7 +82,7 @@ export default function Sec4_Room()  {
         //いなくなったメンバーを削除
         const getMembersArray: Members[] = members.filter(member=>
                     peopleAtom.some(obj => obj.uuid === member.uuid))
-        console.log('削除メンバーを除いた既存メンバー',getMembersArray)
+        // console.log('削除メンバーを除いた既存メンバー',getMembersArray)
 
         //新規メンバーを追加
         let newMembers: Person[]=[]
@@ -93,14 +93,14 @@ export default function Sec4_Room()  {
                 // members.some(member => obj.uuid !== member.uuid))
             newMembers = peopleAtom.filter(obj => members.every(member => member.uuid !== obj.uuid))
         }
-        console.log('isFirst',isFirst)
-        console.log('新規メンバー',newMembers.length,'人',newMembers)
+        // console.log('isFirst',isFirst)
+        // console.log('新規メンバー',newMembers.length,'人',newMembers)
 
         // const myNum = (roomInNumberOfPeople <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
         // for (let i = 1; i <= maxNum; i++) {
         //新規メンバーの情報追加
         newMembers.forEach((obj)=>{
-            console.log('処理メンバー--',obj)
+            // console.log('処理メンバー--',obj)
             //車の色をダブらないように設定
             let carNo = 0
             while (carNo === 0) {
@@ -125,7 +125,7 @@ export default function Sec4_Room()  {
         // console.log(getCarNoArray)
         // setCarFileArray(getCarFileArray)
         // setCarNoArray(getCarNoArray)
-        console.log(getMembersArray.length,'人　',getMembersArray)
+        // console.log(getMembersArray.length,'人　',getMembersArray)
         setMembers(getMembersArray)
     }
 
@@ -178,8 +178,8 @@ export default function Sec4_Room()  {
             ]);
         });
 //existscars
-        const endAnimations =  positions.slice(0,peopleAtom.length).map((position, index) => {
-
+        const endAnimations =  positions.slice(0,maxNum).map((position, index) => {
+            console.log('endAnimation',existsCars)
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(-50),
@@ -202,6 +202,7 @@ export default function Sec4_Room()  {
                     Animated.stagger(0, returnAnimations),
                 ]).start(() => {
                     placeMultipleCars()
+
                     Animated.stagger(1000, animations).start()
                 });
             }
@@ -210,7 +211,7 @@ export default function Sec4_Room()  {
             Animated.stagger(1000, animations).start();
         }
         console.log('is-2-',isRoom)
-
+        setExistsCars(members.length)
         // setIsReturn(false)
     };
 
@@ -247,7 +248,7 @@ console.log('-------------------')
         }
         // setTargetCars(roomInNumberOfPeople)
         setIsFirst(false)
-        setExistsCars(members.length)
+
     }, [peopleAtom]);
 
     const startExit = ()=>{
@@ -295,6 +296,17 @@ console.log('-------------------')
             <View style={{position:'absolute', top:'70%',left:'50%', backgroundColor:'skyblue'}}>
                 <Button title='人数をへらす' onPress={()=> {
                     // setRoomInNumberOfPeople(roomInNumberOfPeople-1)
+                    let no =0
+                    while(no === 0){
+                        const random = Math.floor(Math.random() *  peopleAtom.length)
+                        console.log('random',random)
+                        if(!peopleAtom[random].isMe){
+                            no=random
+                        }
+                    }
+                    const newArr = peopleAtom.filter((_, index) => index !== no)
+                    setPeopleAtom(newArr)
+
                 }}
                         color="red" accessibilityLabel="button"/></View>
 
