@@ -85,20 +85,21 @@ export default function GroupUsersByLocation() {
   }, [users]);
 
   return (
-    <View>
-      <Text>グループ化されたデータ:</Text>
-      {Object.entries(groups).map(([groupKey, members]) => (
-        <View key={groupKey} style={{ marginVertical: 10 }}>
-          <Text style={{ fontWeight: "bold", color: "orange" }}>
-            グループ {groupKey}:
-          </Text>
-          {members.map((user) => (
-            <Text key={user.uuid} style={{ color: "orange" }}>
-              UUID: {user.uuid}
-            </Text>
-          ))}
-        </View>
-      ))}
-    </View>
+      <></>
+    // <View>
+    //   <Text>グループ化されたデータ:</Text>
+    //   {Object.entries(groups).map(([groupKey, members]) => (
+    //     <View key={groupKey} style={{ marginVertical: 10 }}>
+    //       <Text style={{ fontWeight: "bold", color: "orange" }}>
+    //         グループ {groupKey}:
+    //       </Text>
+    //       {members.map((user) => (
+    //         <Text key={user.uuid} style={{ color: "orange" }}>
+    //           UUID: {user.uuid}
+    //         </Text>
+    //       ))}
+    //     </View>
+    //   ))}
+    // </View>
   );
 }

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import GroupUsersByLocation from "./../components/GroupUsersByLocation";
+import GroupUsersByLocation from "./GroupUsersByLocation";
 import { useAtom } from "jotai";
-import { locationAtom, clientIdAtom } from "./../atom";
+import { locationAtom, clientIdAtom } from "../atom";
 import { BASE_URL } from "@/config";
 
-export default function App() {
+export default function Locations() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<any>(null);
   const [location, setLocation] = useAtom(locationAtom);
@@ -148,22 +148,24 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <GroupUsersByLocation />
 
-      <Text style={{ color: "green" }}>{text}</Text>
-      {!subscription ? (
-        // <Button title="継続取得開始" onPress={startWatching} />
-        <Button title="何も起きないよ" />
-      ) : (
-        <>
-          <Button title="継続取得停止" onPress={stopWatching} />
-          <Text style={{ color: "green" }}>
-            Client ID: {clientId || "取得中..."}
-          </Text>
-          <Button title="AsyncStorageのuuid削除" onPress={resetClientId} />
-        </>
-      )}
-    </View>
+  <GroupUsersByLocation />
+    // <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    //   <GroupUsersByLocation />
+    //
+    //   <Text style={{ color: "green" }}>{text}</Text>
+    //   {!subscription ? (
+    //     // <Button title="継続取得開始" onPress={startWatching} />
+    //     <Button title="何も起きないよ" />
+    //   ) : (
+    //     <>
+    //       <Button title="継続取得停止" onPress={stopWatching} />
+    //       <Text style={{ color: "green" }}>
+    //         Client ID: {clientId || "取得中..."}
+    //       </Text>
+    //       <Button title="AsyncStorageのuuid削除" onPress={resetClientId} />
+    //     </>
+    //   )}
+    // </View>
   );
 }

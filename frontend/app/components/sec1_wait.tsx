@@ -10,6 +10,9 @@ import {apiAddressAtom, isJamAtom, isTalkAtom} from "@/app/atom";
 import {useAtomValue} from "jotai/index";
 import { Audio, Video } from "expo-av";
 
+import GroupUsersByLocation from "@/app/components/GroupUsersByLocation";
+import Locations from "@/app/components/Locations";
+
 // import {Button, View, StyleSheet, Text} from "react-native";
 // import { Audio } from "expo-av";
 // import React, { useState } from "react";
@@ -192,6 +195,7 @@ export default function Sec1_Wait()  {
 
     return (
         <View style={styles.container}>
+            <Locations/>
             <Video
                 source={require('../../assets/movies/sec1_wait.mp4')}
                 style={{ width: '70%', height: '40%' }}
