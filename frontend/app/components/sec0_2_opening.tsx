@@ -34,16 +34,12 @@ export default function Sec0_2_Opening()  {
 
 const thisStyles = StyleSheet.create({
     toyota: {
-        // borderStyle:'solid',
-        // borderWidth:1,
         position: 'absolute',
         top: verticalScale(27),
         width: horizontalScale(58),
         height: verticalScale(6)
     },
     dig: {
-        // borderStyle:'solid',
-        // borderWidth:1,
         position: 'absolute',
         top: verticalScale(48),
         width: horizontalScale(58),

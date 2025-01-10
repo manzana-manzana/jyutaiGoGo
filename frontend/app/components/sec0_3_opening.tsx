@@ -49,7 +49,7 @@ export default function Sec0_3_Opening() {
             ]);
         });
 
-        Animated.stagger(500, animations).start(()=>{
+        Animated.stagger(100, animations).start(()=>{
             setIsTitleDisplay(true)
         })
     };
