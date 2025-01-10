@@ -1,19 +1,18 @@
 import { StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { fetchOrGenerateUser } from "@/app/utils/fetchOrGenerateUser";
+import { useFetchOrGenerateUser } from "@/app/components/fetchOrGenerateUser";
 import { useAtom } from "jotai/index";
 import { usernameAtom } from "@/app/atom";
-const [username, setUsername] = useAtom(usernameAtom);
-
-(async () => {
-  try {
-    await fetchOrGenerateUser();
-  } catch (error) {
-    console.error(error);
-  }
-})();
+import { useEffect } from "react";
 
 export default function App() {
+  const { fetchOrGenerateUser } = useFetchOrGenerateUser(); // カスタムフック呼び出し
+  const [username, setUsername] = useAtom(usernameAtom);
+
+  useEffect(() => {
+    fetchOrGenerateUser();
+  }, []);
+
   return (
     <View style={styles.container}>
       <LinearGradient
