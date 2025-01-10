@@ -11,7 +11,7 @@ import { BASE_URL } from "@/config";
 
 // ユーザーデータ型定義
 type User = {
-  uuid: string;
+  id: string;
   latitude: number;
   longitude: number;
 };
@@ -84,8 +84,8 @@ export default function GroupUsersByLocation() {
             グループ {groupKey}:
           </Text>
           {members.map((user) => (
-            <Text key={user.uuid} style={{ color: "orange" }}>
-              UUID: {user.uuid}
+            <Text key={user.id} style={{ color: "orange" }}>
+              UUID: {user.id}
             </Text>
           ))}
         </View>

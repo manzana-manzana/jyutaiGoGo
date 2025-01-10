@@ -14,6 +14,9 @@ type Groups = {
   [key: string]: User[];
 };
 
+// ユーザー名
+export const usernameAtom = atom<string>("username_test");
+
 // ???
 export const uriAtom = atom<any>(null);
 

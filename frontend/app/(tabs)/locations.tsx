@@ -4,7 +4,7 @@ import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GroupUsersByLocation from "./../components/GroupUsersByLocation";
 import { useAtom } from "jotai";
-import { locationAtom, clientIdAtom } from "./../atom";
+import { locationAtom, clientIdAtom, usernameAtom } from "./../atom";
 import { BASE_URL } from "@/config";
 
 export default function App() {
@@ -12,6 +12,7 @@ export default function App() {
   const [subscription, setSubscription] = useState<any>(null);
   const [location, setLocation] = useAtom(locationAtom);
   const [clientId, setClientId] = useAtom(clientIdAtom);
+  const [username, setUsername] = useAtom(usernameAtom);
 
   useEffect(() => {
     (async () => {
@@ -42,39 +43,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const fetchOrGenerateClientId = async () => {
-      try {
-        // AsyncStorage に保存済みの ID を取得
-        const storedId = await AsyncStorage.getItem("clientId");
-        if (storedId) {
-          setClientId(storedId);
-          console.log("既存の Client ID:", storedId);
-        } else {
-          // サーバーから新しい ID を取得
-          const response = await fetch(`${BASE_URL}/api/assign-id`);
-          const data = await response.json();
-          const newClientId = data.clientId;
-
-          // ID を AsyncStorage に保存
-          await AsyncStorage.setItem("clientId", newClientId);
-          setClientId(newClientId);
-          console.log("新しい Client ID:", newClientId);
-        }
-      } catch (error) {
-        console.error("Client ID の取得中にエラーが発生:", error);
-      }
-    };
-
-    (async () => {
-      try {
-        await fetchOrGenerateClientId();
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
     if (!location) return;
 
     const insertLocation = async () => {
@@ -89,7 +57,7 @@ export default function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          uuid: clientId,
+          id: clientId,
           location: {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
@@ -127,7 +95,7 @@ export default function App() {
     }
   };
 
-  // 検証用のuuid削除関数
+  // 検証用のid削除関数
   const resetClientId = async () => {
     try {
       // 保存されている UUID を削除
@@ -161,7 +129,7 @@ export default function App() {
           <Text style={{ color: "green" }}>
             Client ID: {clientId || "取得中..."}
           </Text>
-          <Button title="AsyncStorageのuuid削除" onPress={resetClientId} />
+          <Button title="AsyncStorageのid削除" onPress={resetClientId} />
         </>
       )}
     </View>

@@ -1,5 +1,17 @@
 import { StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { fetchOrGenerateUser } from "@/app/utils/fetchOrGenerateUser";
+import { useAtom } from "jotai/index";
+import { usernameAtom } from "@/app/atom";
+const [username, setUsername] = useAtom(usernameAtom);
+
+(async () => {
+  try {
+    await fetchOrGenerateUser();
+  } catch (error) {
+    console.error(error);
+  }
+})();
 
 export default function App() {
   return (
@@ -14,8 +26,9 @@ export default function App() {
         colors={["#4c669f", "#3b5998", "#192f6a"]}
         style={styles.button}
       >
-        <Text style={styles.text}>Sign in with Facebook</Text>
+        <Text style={styles.text}>Hello world!</Text>
       </LinearGradient>
+      <Text style={styles.text}>{username}</Text>
     </View>
   );
 }
