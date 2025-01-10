@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { useAtom, useAtomValue } from "jotai";
-import { usersAtom, groupsAtom, locationAtom } from "./../atom";
+import { usersAtom, groupsAtom, locationAtom ,isJamAtom , roomInNumberOfPeopleAtom} from "./../atom";
 import { BASE_URL } from "@/config";
 
 // ユーザーデータ型定義
@@ -19,6 +19,10 @@ export default function GroupUsersByLocation() {
   const [users, setUsers] = useAtom(usersAtom);
   const [groups, setGroups] = useAtom(groupsAtom);
   const location = useAtomValue(locationAtom);
+  // 渋滞の有無を判定している
+  const [isJam, setIsJam] = useAtom(isJamAtom)
+  const [roomInNumberOfPeople, setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom)
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -60,6 +64,19 @@ export default function GroupUsersByLocation() {
       }, {});
 
       setGroups(grouped);
+
+      // 自分の位置情報から所属グループを特定
+      const myLat = Math.floor(location.coords.latitude * 10) / 10;
+      const myLon = Math.floor(location.coords.longitude * 10) / 10;
+      const myGroupKey = `${myLat},${myLon}`;
+      // デバッグ追加
+      console.log("💖自分の位置情報:", { myLat, myLon, myGroupKey });
+      console.log("😀自分のグループのメンバー:", grouped[myGroupKey]);
+
+      // 自分のグループのメンバー数をチェック()
+      const hasMultipleMembers = grouped[myGroupKey]?.length >= 2;
+      setIsJam(hasMultipleMembers); // 新しく作るステート
+      setRoomInNumberOfPeople(grouped[myGroupKey]?.length)
     };
 
     if (users.length > 0) {
