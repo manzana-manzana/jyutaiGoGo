@@ -29,6 +29,7 @@ export default function Sec0_3_Opening() {
     );
 
     const moveImagesSequentially = () => {
+
         const animations = positions.map((position, index) => {
             return Animated.parallel([
                 Animated.timing(position.left, {
