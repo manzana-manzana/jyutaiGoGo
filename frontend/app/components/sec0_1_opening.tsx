@@ -41,19 +41,16 @@ const thisStyles = StyleSheet.create({
         height: verticalScale(42),
         width:'100%',
         justifyContent: 'space-between',
-
+        alignItems: 'center'
     },
     text: {
-        // borderStyle:'solid',
-        // borderWidth:1,
-
-        // top: '27%',
-        // width: '58%',
-        // height: '6%',
+        width: '100%',
+        height: verticalScale(21),
         fontSize: moderateScale(22),
         textAlign: 'center',
         color: '#2B2B2B',
-        fontFamily: 'NotoSansJP_700Bold'
+        fontFamily: 'NotoSansJP_700Bold',
+        // backgroundColor:"pink"
     },
 
 });

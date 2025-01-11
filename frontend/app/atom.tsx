@@ -18,6 +18,7 @@ type Groups = {
 export const uriAtom = atom<any>(null);
 
 // APIパス
+// export const apiAddressAtom = atom<string>('http://192.168.1.9:2929');
 export const apiAddressAtom = atom<string>(BASE_URL);
 
 // 表示screen
@@ -44,6 +45,11 @@ export const usersAtom = atom<User[]>([]);
 // グループ化されたデータ
 export const groupsAtom = atom<Groups>({});
 
+//ローカルに保存されたusername
+export const userNameAtom = atom<string>('');
+
+//オープニングムービー終了判定
+export const isOpeningEndAtom = atom<boolean>(false)
 
 //車関係の画像データ
 type CarImages = {
