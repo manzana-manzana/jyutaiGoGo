@@ -1,12 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Text, View, StyleSheet, Image, ImageSourcePropType, Animated} from 'react-native';
+import {Text, View, StyleSheet, Image, ImageSourcePropType, Animated, Pressable} from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
 // import { moderateScale } from 'react-native-size-matters';
 import Metrics from './metrics'
 const {horizontalScale, verticalScale, moderateScale} = Metrics
 import { styles } from '@/app/style';
 import {useAtomValue} from "jotai/index";
-import {carImagesAtom} from "@/app/atom";
+import {carImagesAtom, isOpeningEndAtom, screenAtom, userNameAtom} from "@/app/atom";
 import {useAtom, useSetAtom} from "jotai";
 
 export default function Sec0_3_Opening() {
@@ -14,6 +14,9 @@ export default function Sec0_3_Opening() {
         [key: string]: ImageSourcePropType;
     };
     const carImages = useAtomValue<CarImages>(carImagesAtom)
+    const [userName, setUserName] = useAtom<string>(userNameAtom)
+    const [screen, setScreen] = useAtom(screenAtom)
+    const setIsOpeningEnd = useSetAtom(isOpeningEndAtom)
     const [isTitleDisplay , setIsTitleDisplay]= useState(false)
     const [cars, _] = useState([carImages['c3_1'],carImages['c1_1'],carImages['c5_1'],
                                         carImages['c2_1'],carImages['c7_1'],carImages['c6_1'],])
@@ -51,6 +54,9 @@ export default function Sec0_3_Opening() {
 
         Animated.stagger(400, animations).start(()=>{
             setIsTitleDisplay(true)
+            setTimeout(()=>{
+                console.log('移動するよ')
+                setIsOpeningEnd(true)},3000)
         })
     };
 
@@ -64,16 +70,10 @@ export default function Sec0_3_Opening() {
         <View style={styles.container}>
             <Image style={{width: '100%', height:'100%'}}
                    source={require('../../assets/images/sec0_3_opening.png')}/>
-            {/*<Video*/}
-            {/*    ref={videoRef}*/}
-            {/*    source={require('../../assets/movies/sec0_3_opening.mp4')}*/}
-            {/*    style={{ width: '100%', height: '100%' }}*/}
-            {/*    resizeMode={ResizeMode.COVER} // react-native-videoの "resizeMode='cover'" に相当*/}
-            {/*    isLooping // react-native-video の repeat={true} に相当*/}
-            {/*    shouldPlay // デフォルトで自動再生したい場合（react-native-video の autoplay に相当）*/}
-            {/*    useNativeControls={false} // react-native-video の controls={false} に相当*/}
-            {/*/>*/}
             <Text style={[{opacity:isTitleDisplay?1:0},thisStyles.overlayText]}>渋滞GO！GO！</Text>
+            <Text style={[{opacity:isTitleDisplay?1:0},thisStyles.overlayText,{top:verticalScale(40)}]}>{userName}さん</Text>
+
+
 
             {cars.map((car, index) => (
                 <Animated.View
@@ -121,5 +121,15 @@ const thisStyles = StyleSheet.create({
         fontSize: moderateScale(50),
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    button: {
+        position: 'absolute',
+        top: verticalScale(50),//あとで再計算
+        width: horizontalScale(20),
+        height: verticalScale(9),
+        borderRadius: 40,
+        backgroundColor:'#737373',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
