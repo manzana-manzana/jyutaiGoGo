@@ -71,7 +71,7 @@ export default function Sec0_3_Opening() {
             <Image style={{width: '100%', height:'100%'}}
                    source={require('../../assets/images/sec0_3_opening.png')}/>
             <Text style={[{opacity:isTitleDisplay?1:0},thisStyles.overlayText]}>渋滞GO！GO！</Text>
-            <Text style={[{opacity:isTitleDisplay?1:0},thisStyles.overlayText,{top:verticalScale(40)}]}>{userName}さん</Text>
+            <Text style={[{opacity:isTitleDisplay?1:0},thisStyles.overlayText,{top:verticalScale(40)}]}>{userName===''?'名前未登録':`${userName}さん`}</Text>
 
 
 

@@ -3,7 +3,7 @@ import {Image, Pressable, StyleSheet, Text, View, Animated, Button, ImageSourceP
 import {styles} from "@/app/style";
 import Metrics from './metrics'
 const {horizontalScale, verticalScale, moderateScale} = Metrics
-import {carImagesAtom, isJamAtom, isTalkAtom, roomInNumberOfPeopleAtom} from "@/app/atom";
+import {carImagesAtom, isJamAtom, isTalkAtom,  roomMemberAtom} from "@/app/atom";
 import {useAtom} from "jotai/index";
 import { LinearGradient } from 'expo-linear-gradient';
 import {useAtomValue} from "jotai";
@@ -16,10 +16,11 @@ type CarImages = {
 };
 
 export default function Sec4_Room()  {
-    // const [roomInNumberOfPeople,setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom)
+    // const [roomInNumberOfPeople,setRoomInNumberOfPeople] = useAtom(roomInNumberOfRoomMember)
     const [isJam, setIsJam] = useAtom(isJamAtom)
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const carImages = useAtomValue<CarImages>(carImagesAtom)
+    const [roomMember, setRoomMember] = useAtom(roomMemberAtom)
 
     const [count, setCount]= useState(10)
     const [isExit, setIsExit]= useState(false)
@@ -30,28 +31,20 @@ export default function Sec4_Room()  {
     const [existsCars, setExistsCars] = useState(0)
     const [members, setMembers]= useState<Members[]>([])
     const [isDisplayName, setIsDisplayName] = useState<boolean>(false)
-
-    //テスト用に配置
-    const [peopleAtom , setPeopleAtom] = useState<Person[]>([
-        {uuid:'u11111', username:'たろう', isMe:false},
-        {uuid:'u22222', username:'しげりんご', isMe:true},
-        {uuid:'u33333', username:'ミニオン', isMe:false},
-        {uuid:'u4444', username:'炭治郎', isMe:false},
-    ])
-
+    
     const placeMultipleCars = () => {
         console.log('placeMultipleCars-start--')
 
         //いなくなったメンバーを削除
         const getMembersArray: Members[] = members.filter(member=>
-                    peopleAtom.some(obj => obj.uuid === member.uuid))
+                    roomMember.some(obj => obj.uuid === member.uuid))
 
         //新規メンバーを追加
         let newMembers: Person[]=[]
         if(isFirst) {
-            newMembers = peopleAtom
+            newMembers = roomMember
         }else{
-            newMembers = peopleAtom.filter(obj => members.every(member => member.uuid !== obj.uuid))
+            newMembers = roomMember.filter(obj => members.every(member => member.uuid !== obj.uuid))
         }
 
         //新規メンバーの情報追加
@@ -75,7 +68,7 @@ export default function Sec4_Room()  {
         const sortArray:Members[] = []
         let addIndex = 0
         for(let i=0; i< getMembersArray.length; i++){
-            const myNum = (peopleAtom.length <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
+            const myNum = (roomMember.length <= 3 ? 2 : 4)//ユーザー車位置は参加者3人までなら2、4人以上なら4
 
             if(i + 1 === myNum){
                 sortArray.push(getMembersArray.filter(member => member.isMe)[0])
@@ -102,9 +95,9 @@ export default function Sec4_Room()  {
     );
 
     const moveImagesSequentially = (isReturn:boolean) => {
-        console.log('moveImagesSequentially-start--','exists',existsCars,'台 / numbers', members.length,'台','perople',peopleAtom.length)
+        console.log('moveImagesSequentially-start--','exists',existsCars,'台 / numbers', members.length,'台','perople',roomMember.length)
 
-        const animations = positions.slice(0,peopleAtom.length).map((position, index) => {
+        const animations = positions.slice(0,roomMember.length).map((position, index) => {
             return Animated.parallel([
                 Animated.timing(position.left, {
                     toValue: horizontalScale(Number.isInteger(index/2)?
@@ -164,7 +157,7 @@ export default function Sec4_Room()  {
                     placeMultipleCars()//車の配列を作りなおし
                     Animated.stagger(1000, animations).start(()=>{
                         setIsDisplayName(true)
-                        setExistsCars(peopleAtom.length)
+                        setExistsCars(roomMember.length)
                         console.log('--return-end---')
                     })
                 });
@@ -178,7 +171,7 @@ export default function Sec4_Room()  {
                 setTimeout(()=>{
                     setIsDisplayName(true)
                     setIsRoom(true)
-                    setExistsCars(peopleAtom.length)
+                    setExistsCars(roomMember.length)
                     console.log('--not return --end')
                 },2000)
 
@@ -204,7 +197,7 @@ export default function Sec4_Room()  {
             moveImagesSequentially(true);
             setIsFirst(false)
         }
-    }, [peopleAtom]);
+    }, [roomMember]);
 
 
     const startExit = ()=>{
@@ -239,9 +232,9 @@ export default function Sec4_Room()  {
             <View style={{position:'absolute', top:'65%',left:'70%',backgroundColor:'yellow'}}>
                 <Button title='人数を増やす' onPress={()=>{
                     console.log('⭐️up')
-                    if (peopleAtom.length <= 5) {
+                    if (roomMember.length <= 5) {
                         const random =Math.floor(Math.random() * 1000)
-                        setPeopleAtom((prevPeopleAtom) => [...prevPeopleAtom,  {
+                        setRoomMember((prevRoomMember) => [...prevRoomMember,  {
                             uuid: `u${random}`,username: '追加',isMe: false,
                         }]);
                     }
@@ -253,13 +246,13 @@ export default function Sec4_Room()  {
                     console.log('🩷down')
                     let no =0
                     while(no === 0){
-                        const random = Math.floor(Math.random() *  peopleAtom.length)
-                        if(!peopleAtom[random].isMe){
+                        const random = Math.floor(Math.random() *  roomMember.length)
+                        if(!roomMember[random].isMe){
                             no=random
                         }
                     }
-                    const newArr = peopleAtom.filter((_, index) => index !== no)
-                    setPeopleAtom(newArr)
+                    const newArr = roomMember.filter((_, index) => index !== no)
+                    setRoomMember(newArr)
                 }}
                         color="red" accessibilityLabel="button"/></View>
 
