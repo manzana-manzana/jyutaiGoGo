@@ -57,20 +57,7 @@ export default function Sec0_4_username()  {
     useEffect(() => {
         console.log('effect------')
         moveCar(44,36,false)
-        // Animated.parallel([
-        //     Animated.timing(position.left, {
-        //         toValue: horizontalScale(36),
-        //         duration: 2000,
-        //         useNativeDriver: false,
-        //     }),
-        //     Animated.timing(position.top, {
-        //         toValue: verticalScale(44),
-        //         duration: 2000,
-        //         useNativeDriver: false,
-        //     })
-        // ]).start(()=>{
-        //     setIsDisplayInput(true)
-        // })
+
     }, []);
 
     return (
