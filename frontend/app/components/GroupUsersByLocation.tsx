@@ -1,12 +1,17 @@
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { useAtom, useAtomValue } from "jotai";
-import { usersAtom, groupsAtom, locationAtom } from "../atom";
+import {
+  usersAtom,
+  groupsAtom,
+  locationAtom,
+  currentGroupUsersAtom,
+} from "./../atom";
 import { BASE_URL } from "@/config";
 
 // ユーザーデータ型定義
 type User = {
-  uuid: string;
+  id: string;
   latitude: number;
   longitude: number;
 };
@@ -19,6 +24,9 @@ export default function GroupUsersByLocation() {
   const [users, setUsers] = useAtom(usersAtom);
   const [groups, setGroups] = useAtom(groupsAtom);
   const location = useAtomValue(locationAtom);
+  const [currentGroupUsers, setCurrentGroupUsers] = useAtom(
+    currentGroupUsersAtom,
+  );
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -76,8 +84,8 @@ export default function GroupUsersByLocation() {
             グループ {groupKey}:
           </Text>
           {members.map((user) => (
-            <Text key={user.uuid} style={{ color: "orange" }}>
-              UUID: {user.uuid}
+            <Text key={user.id} style={{ color: "orange" }}>
+              UUID: {user.id}
             </Text>
           ))}
         </View>

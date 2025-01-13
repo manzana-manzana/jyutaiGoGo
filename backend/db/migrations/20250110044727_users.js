@@ -4,8 +4,8 @@
  */
 exports.up = async function (knex) {
   await knex.schema.createTable("users", (table) => {
-    table.increments("id");
-    table.uuid("uuid").primary();
+    table.increments("id").primary();
+    table.string("username").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };
