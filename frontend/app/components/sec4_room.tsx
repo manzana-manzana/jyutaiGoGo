@@ -9,6 +9,7 @@ import {useAtomValue} from "jotai";
 import {useAtom} from "jotai/index";
 // import LinearGradient from 'react-native-linear-gradient';
 // import Animated from "react-native-reanimated";
+import Locations from "@/app/components/Locations";
 
 
 const carImages = {
@@ -130,9 +131,16 @@ export default function Sec4_Room()  {
         }
     }
 
+    useEffect(() => {
+        if (roomInNumberOfPeople <= 1 && isRoom) {
+            startExit();
+        }
+    }, [roomInNumberOfPeople, isRoom]);
+
 
     return (
         <View style={styles.container}>
+            <Locations/>
             <Image style={{width: '100%', height:'100%'}}
                    resizeMode='contain'
                    source={require('../../assets/images/sec4_room.png')}/>

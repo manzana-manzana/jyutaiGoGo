@@ -25,7 +25,7 @@ exports.seed = async function (knex) {
       created_at: knex.fn.now(),
     },
     {
-      uuid: "9b6d4f5e-1d2c-7a8b-9c0a-4567890123de", // 刈谷市
+      uuid: "9b6d4f5e-1d2c-7a8b-9c0a-4567890123de", // 刈谷市（テストもこれで）
       latitude: 34.86614,
       longitude: 136.90672,
       created_at: knex.fn.now(),
