@@ -5,17 +5,12 @@ import Metrics from './metrics'
 const {horizontalScale, verticalScale, moderateScale} = Metrics
 import {styles} from "@/app/style";
 import {useAtom} from "jotai";
-import {apiAddressAtom, isJamAtom, isTalkAtom} from "@/app/atom";
+import {apiAddressAtom, isJamAtom, isTalkAtom, carImagesAtom} from "@/app/atom";
 // import {amiVoice} from "@/app/components/sec1_wait_amiVoice";
 import {useAtomValue} from "jotai/index";
 import { Audio, Video } from "expo-av";
 import {number} from "prop-types";
 
-// import {Button, View, StyleSheet, Text} from "react-native";
-// import { Audio } from "expo-av";
-// import React, { useState } from "react";
-// import { useAtom, useAtomValue } from "jotai";
-// import {apiAddressAtom, storedAtom, testAtom, uriAtom} from "../atom";
 
 type Ami = {
     recording: null | Audio.Recording;
@@ -127,6 +122,11 @@ export default function Sec1_Wait()  {
     const [isJam, setIsJam] = useAtom(isJamAtom)//テスト用に設置。本来は位置取得時にSet。
     const [isTalk, setIsTalk] = useAtom(isTalkAtom)
     const apiAddress = useAtomValue(apiAddressAtom)//APIアドレス（頭部分）
+    type CarImages = {
+        [key: string]: ImageSourcePropType;
+    };
+    const carImages = useAtomValue<CarImages>(carImagesAtom)
+
     const [isReording, setIsRecording] = useState(false)
     const [recordingText, setRecordingText] = useState('')
     const [isRecordingSuccessful, setIsRecordingSuccessful] = useState(false)
@@ -256,7 +256,7 @@ export default function Sec1_Wait()  {
             >
                 <Image style={{width:horizontalScale(27)}}
                        resizeMode='contain'
-                       source={require('../../assets/images/cars/car3_1.png')}/>
+                       source={carImages['c3_1']}/>
             </Animated.View>
 
             <Animated.View
@@ -267,13 +267,17 @@ export default function Sec1_Wait()  {
                 }}>
                 <Image style={{width:horizontalScale(27)}}
                        resizeMode='contain'
-                       source={require('../../assets/images/cars/car3_1.png')}/>
+                       source={carImages['c3_1']}/>
             </Animated.View>
 
 
             <View style={{position:'absolute', top:'10%', backgroundColor:'yellow'}}>
             <Button title='渋滞発生（クリック）' onPress={()=>{setIsJam(!isJam); setIsRecordingSuccessful(false)}}
                     color="red" accessibilityLabel="button"/>
+            </View>
+            <View style={{position:'absolute', top:'15%', backgroundColor:'yellow'}}>
+                <Button title='ルームへ移動' onPress={()=>{setIsTalk(true)}}
+                        color="red" accessibilityLabel="button"/>
             </View>
 
                 <View style={[thisStyles.jamArea, { opacity: isJam ? 1:0 }]}>
