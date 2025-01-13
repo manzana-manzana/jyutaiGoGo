@@ -187,6 +187,7 @@ export default function Sec1_Wait()  {
     }, []);
     //車ムービー_ここまで_______________________________________
 
+    //マイクムービー_ここから_______________________________________
     const fadeAnim1 = new Animated.Value(0);
     const fadeAnim2 = new Animated.Value(0);
     const fadeAnim3 = new Animated.Value(0);
@@ -218,6 +219,7 @@ export default function Sec1_Wait()  {
             }
         },1600)
     }, [isSoundFinish, isRecordingSuccessful, isRecording]);
+    //マイクムービー_ここまで_______________________________________
 
     const playSound = async () => {
         console.log('load　sound')
@@ -228,7 +230,7 @@ export default function Sec1_Wait()  {
             }else if(isNotTalk){
                 soundFile = require('../../assets/voice/sec1_wait_wait.mp3')
             }else{
-                soundFile = require('../../assets/voice/sec1_read_kakunin.mp3')
+                soundFile = require('../../assets/voice/sec1_wait_kakunin.mp3')
             }
             const {sound} = await Audio.Sound.createAsync(soundFile);
 
