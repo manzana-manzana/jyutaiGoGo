@@ -5,14 +5,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAtom } from "jotai/index";
 import { usernameAtom } from "@/app/atom";
 
-export const NicknameRegistration = () => {
+export const UsernameRegistration = () => {
   const [nickname, setNickname] = useState("");
   const [username, setUsername] = useAtom(usernameAtom);
 
   const handleRegister = async () => {
     try {
-      const clientId = await generateUser(nickname); // 1. generateUserでユーザー登録
-      await AsyncStorage.setItem("clientId", String(clientId)); // 2. id を Asyncstorageに保存
+      // 1. generateUserでusersテーブルにユーザー登録
+      const clientId = await generateUser(nickname);
+      // 2. id を Asyncstorageに保存
+      await AsyncStorage.setItem("clientId", String(clientId));
       console.log(`id: ${clientId} をstring型でAsyncStorageに保存しました。`);
       // 3. id を atomにも保存
       setUsername(nickname);

@@ -13,6 +13,7 @@ import Metrics from "./metrics";
 import { clientIdAtom, screenAtom, usernameAtom, usersAtom } from "@/app/atom";
 import { useAtom } from "jotai";
 import { useFetchClientId } from "@/app/features/fetchClientId";
+import { useUsernameRegistration } from "@/app/features/usernameRegistration";
 const { horizontalScale, verticalScale, moderateScale } = Metrics;
 
 export default function Sec0_4_username() {
@@ -23,12 +24,24 @@ export default function Sec0_4_username() {
   const [isDisplayInput, setIsDisplayInput] = useState(false);
 
   const { fetchClientId } = useFetchClientId(); // カスタムフックの呼び出し
+  const usernameRegister = useUsernameRegistration();
 
-  const registerUserName = async () => {
-    console.log("registerUserName");
+  useEffect(() => {
+    setUsername(text);
+    console.log("名前入力中: ", text);
+  }, [text]);
+
+  const registerUsername = async () => {
+    console.log("registerUsername_start");
+    console.log("🐯username: ", username);
+    try {
+      await usernameRegister();
+    } catch (error) {
+      console.error("useUsernameRegistrationに失敗", error);
+    }
     setIsDisplayInput(false);
     moveCar(67, -50, true);
-    console.log("registerUserName_end");
+    console.log("registerUsername_end");
   };
 
   // 初期位置
@@ -102,7 +115,7 @@ export default function Sec0_4_username() {
             autoCorrect={false}
             maxLength={5}
           />
-          <Pressable style={thisStyles.button} onPress={registerUserName}>
+          <Pressable style={thisStyles.button} onPress={registerUsername}>
             <Text>登録</Text>
           </Pressable>
         </View>
@@ -116,7 +129,7 @@ export default function Sec0_4_username() {
       {/*        value={text}*/}
       {/*        keyboardType={'name-phone-pad'}*/}
       {/*        />*/}
-      {/*    <Pressable style={thisStyles.button} onPress={registerUserName} >*/}
+      {/*    <Pressable style={thisStyles.button} onPress={registerUsername} >*/}
       {/*        <Text style={thisStyles.text}>登録</Text>*/}
       {/*    </Pressable>*/}
 

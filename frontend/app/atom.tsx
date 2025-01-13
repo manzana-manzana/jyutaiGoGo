@@ -5,7 +5,7 @@ import { useState } from "react";
 
 // ユーザーデータ型定義
 type User = {
-  uuid: string;
+  id: string;
   username: string;
   latitude: number;
   longitude: number;
@@ -55,10 +55,10 @@ export const isOpeningEndAtom = atom<boolean>(false);
 
 //位置情報で設定したルームメンバーの配列(ルーム画面での車表示で使用)
 export const roomMemberAtom = atom([
-  { uuid: "u11111", username: "たろう", isMe: false },
-  { uuid: "u22222", username: "しげりんご", isMe: true },
-  { uuid: "u33333", username: "ミニオン", isMe: false },
-  { uuid: "u4444", username: "炭治郎", isMe: false },
+  { id: "u11111", username: "たろう", isMe: false },
+  { id: "u22222", username: "しげりんご", isMe: true },
+  { id: "u33333", username: "ミニオン", isMe: false },
+  { id: "u4444", username: "炭治郎", isMe: false },
 ]);
 
 //車関係の画像データ
