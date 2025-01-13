@@ -5,7 +5,7 @@
 exports.up = async function (knex) {
   await knex.schema.createTable("locations", (table) => {
     // table.increments("id").primary();
-    table.integer("user_id").unsigned().notNullable().index(); // 修正箇所
+    table.integer("user_id").unsigned().notNullable().unique().index();
     table.float("latitude").notNullable(); // 緯度
     table.float("longitude").notNullable(); // 経度
     table.timestamp("updated_at").defaultTo(knex.fn.now()); // データ記録時刻

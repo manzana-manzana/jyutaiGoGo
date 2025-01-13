@@ -64,9 +64,9 @@ exports.seed = async function (knex) {
     },
     {
       user_id: 9,
-      // 長久手市（愛・地球博記念公園）
-      latitude: 35.09384,
-      longitude: 137.15963,
+      // 米野木
+      latitude: 35.1555,
+      longitude: 137.1555,
       updated_at: knex.fn.now(),
     },
   ]);
