@@ -83,7 +83,7 @@ export default function App() {
         console.error(error);
       }
     })();
-  }, [location, clientId]); // clientId を依存配列に追加
+  }, [location, clientId]); // 移動するたびにレンダリング
 
   const stopWatching = () => {
     if (subscription) {
@@ -100,7 +100,7 @@ export default function App() {
     try {
       // 保存されている UUID を削除
       await AsyncStorage.removeItem("clientId");
-      setClientId(null);
+      setClientId(undefined);
       console.log("Client ID をリセットしました");
     } catch (error) {
       console.error("Client ID リセット中にエラーが発生:", error);

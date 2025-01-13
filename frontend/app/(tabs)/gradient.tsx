@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { generateUser } from "@/app/features/generateUser";
 import { useFetchClientId } from "@/app/features/fetchClientId";
 import { NicknameRegistration } from "@/app/components/SendUsername";
 import { useAtom } from "jotai/index";
 import { usernameAtom, clientIdAtom } from "@/app/atom";
-import { useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect } from "react";
 import { BASE_URL } from "@/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const [username, setUsername] = useAtom(usernameAtom);
@@ -26,6 +26,21 @@ export default function App() {
     })();
   }, []);
 
+  // 検証用のid削除関数
+  const resetClientId = async () => {
+    try {
+      // 保存されている UUID を削除
+      await AsyncStorage.removeItem("clientId");
+      await AsyncStorage.removeItem("username");
+      await AsyncStorage.removeItem("userName");
+
+      setClientId(undefined);
+      console.log("Client ID をリセットしました");
+    } catch (error) {
+      console.error("Client ID リセット中にエラーが発生:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -41,6 +56,8 @@ export default function App() {
         <Text style={styles.text}>Hello world!</Text>
       </LinearGradient>
       <Text style={styles.text}>{username}</Text>
+      <Button title="AsyncStorageのid削除" onPress={resetClientId} />
+
       <NicknameRegistration />
     </View>
   );
