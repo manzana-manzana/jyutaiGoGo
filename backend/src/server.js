@@ -30,8 +30,31 @@ function setupServer() {
   });
 
   //expo-location-ここから-----------------------------------------------
+  app.get(`/api/users/:id`, async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+      const user = await knex("users").where({ id: userId }).first(); // 一致する最初のレコードを取得
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ error: "指定されたユーザーが見つかりません。" });
+      }
+
+      const username = user.username;
+
+      res.status(200).json({ username });
+    } catch (error) {
+      console.error("Error fetching username:", error);
+      res.status(500).json({ error: "サーバーでエラーが発生しました。" });
+    }
+  });
+
   app.post("/api/users", async (req, res) => {
+    console.log("🍅:", req.body);
     const { username } = req.body;
+    console.log("username: ", username);
 
     // リクエストのバリデーション
     if (!req.body || !username) {
@@ -40,11 +63,11 @@ function setupServer() {
 
     const insertData = {
       username,
-      createdAt: knex.fn.now(),
     };
 
     try {
       const user = await knex("users").insert(insertData).returning("*");
+      console.log("inserted user:", user);
       return res.status(200).json({ user });
     } catch (error) {
       console.error("Error insert user:", error.message);

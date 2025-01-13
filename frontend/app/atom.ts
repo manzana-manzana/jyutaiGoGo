@@ -17,6 +17,9 @@ type Groups = {
 // ユーザー名
 export const usernameAtom = atom<string>("username_test");
 
+// ユーザーのid
+export const clientIdAtom = atom<string | undefined>(undefined);
+
 // ???
 export const uriAtom = atom<any>(null);
 
@@ -34,9 +37,6 @@ export const isTalkAtom = atom<boolean>(false);
 
 // ルーム内の人数
 export const roomInNumberOfPeopleAtom = atom<number>(2);
-
-// ユーザーのuuid
-export const clientIdAtom = atom<string | null>(null);
 
 // ユーザーの緯度・経度
 export const locationAtom = atom<any>(null);

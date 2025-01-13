@@ -1,16 +1,29 @@
 import { StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useFetchOrGenerateUser } from "@/app/components/fetchOrGenerateUser";
+import { generateUser } from "@/app/features/generateUser";
+import { useFetchClientId } from "@/app/features/fetchClientId";
+import { NicknameRegistration } from "@/app/components/SendUsername";
 import { useAtom } from "jotai/index";
-import { usernameAtom } from "@/app/atom";
+import { usernameAtom, clientIdAtom } from "@/app/atom";
 import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "@/config";
 
 export default function App() {
-  const { fetchOrGenerateUser } = useFetchOrGenerateUser(); // カスタムフック呼び出し
   const [username, setUsername] = useAtom(usernameAtom);
+  const [clientId, setClientId] = useAtom(clientIdAtom);
+
+  const { fetchClientId } = useFetchClientId(); // カスタムフックの呼び出し
 
   useEffect(() => {
-    fetchOrGenerateUser();
+    (async () => {
+      const id = await fetchClientId();
+      setClientId(id);
+      const response = await fetch(`${BASE_URL}/api/users/${id}`);
+      const data = await response.json();
+      console.log("🍉:", data);
+      setUsername(data.username);
+    })();
   }, []);
 
   return (
@@ -28,6 +41,7 @@ export default function App() {
         <Text style={styles.text}>Hello world!</Text>
       </LinearGradient>
       <Text style={styles.text}>{username}</Text>
+      <NicknameRegistration />
     </View>
   );
 }
