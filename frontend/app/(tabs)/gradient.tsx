@@ -2,7 +2,7 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { generateUser } from "@/app/features/generateUser";
 import { useFetchClientId } from "@/app/features/fetchClientId";
-import { NicknameRegistration } from "@/app/components/SendUsername";
+import { UsernameRegistration } from "@/app/components/SendUsername";
 import { useAtom } from "jotai/index";
 import { usernameAtom, clientIdAtom } from "@/app/atom";
 import React, { useEffect } from "react";
@@ -58,7 +58,7 @@ export default function App() {
       <Text style={styles.text}>{username}</Text>
       <Button title="AsyncStorageのid削除" onPress={resetClientId} />
 
-      <NicknameRegistration />
+      <UsernameRegistration />
     </View>
   );
 }

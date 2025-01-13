@@ -12,8 +12,10 @@ import { BASE_URL } from "@/config";
 // ユーザーデータ型定義
 type User = {
   id: string;
+  username: string;
   latitude: number;
   longitude: number;
+  isMyAccount: boolean;
 };
 
 type Groups = {

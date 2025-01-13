@@ -9,9 +9,7 @@ import {
   screenAtom,
   usernameAtom,
 } from "@/app/atom";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "@/app/style";
-import Sec3_Read from "@/app/components/sec3_read";
 import Sec1_Wait from "@/app/components/sec1_wait";
 import Sec0_1_Opening from "@/app/components/sec0_1_opening";
 import Sec0_2_Opening from "@/app/components/sec0_2_opening";
