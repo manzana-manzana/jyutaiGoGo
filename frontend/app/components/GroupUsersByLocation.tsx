@@ -1,17 +1,13 @@
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { useAtom, useAtomValue } from "jotai";
-import {
-  usersAtom,
-  groupsAtom,
-  locationAtom,
-  currentGroupUsersAtom,
-} from "./../atom";
+import { usersAtom, groupsAtom, locationAtom, roomMemberAtom } from "./../atom";
 import { BASE_URL } from "@/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ユーザーデータ型定義
 type User = {
-  id: string;
+  id: number;
   username: string;
   latitude: number;
   longitude: number;
@@ -26,9 +22,7 @@ export default function GroupUsersByLocation() {
   const [users, setUsers] = useAtom(usersAtom);
   const [groups, setGroups] = useAtom(groupsAtom);
   const location = useAtomValue(locationAtom);
-  const [currentGroupUsers, setCurrentGroupUsers] = useAtom(
-    currentGroupUsersAtom,
-  );
+  const [roomMember, setRoomMember] = useAtom(roomMemberAtom);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -37,8 +31,18 @@ export default function GroupUsersByLocation() {
         if (!response.ok) {
           console.error(`APIリクエストに失敗しました: ${response.status}`);
         }
-        const data: User[] = await response.json();
-        setUsers(data);
+        const clientId = await AsyncStorage.getItem("clientId");
+        const data = await response.json();
+        const users: User[] = data.map((user: any) => {
+          return {
+            id: user.user_id,
+            username: user.username,
+            latitude: user.latitude,
+            longitude: user.longitude,
+            isMyAccount: user.user_id === Number(clientId),
+          };
+        });
+        setUsers(users);
       } catch (error) {
         console.error("ユーザー情報取得中にエラーが発生:", error);
       }
@@ -54,27 +58,29 @@ export default function GroupUsersByLocation() {
   }, [location]);
 
   useEffect(() => {
-    // グループ分けロジック
-    const groupUsersByLocation = () => {
-      const grouped = users.reduce<Groups>((acc, user) => {
-        // 緯度と経度を小数点第一位まで切り捨て
-        const lat = Math.floor(user.latitude * 10) / 10; // 約11km
-        const lon = Math.floor(user.longitude * 10) / 10; // 約9.1km
-        const groupKey = `${lat},${lon}`; // グループのキー
+    if (users.length === 0) return;
 
-        if (!acc[groupKey]) {
-          acc[groupKey] = [];
-        }
-        acc[groupKey].push(user);
-        return acc;
-      }, {});
+    // 1. グループ分け
+    const grouped = users.reduce<Groups>((acc, user) => {
+      const lat = Math.floor(user.latitude * 10) / 10;
+      const lon = Math.floor(user.longitude * 10) / 10;
+      const groupKey = `${lat},${lon}`;
 
-      setGroups(grouped);
-    };
+      // 同じグループキーに属するユーザーを配列にまとめる
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+      acc[groupKey].push(user);
+      return acc;
+    }, {});
+    setGroups(grouped);
 
-    if (users.length > 0) {
-      groupUsersByLocation();
-    }
+    // 2.自分が含まれるグループだけ フラットにして roomMember に
+    const roomMemberData = Object.values(grouped) // 各グループ配列を取得
+      .filter((members) => members.some((member) => member.isMyAccount))
+      .flat();
+
+    setRoomMember(roomMemberData);
   }, [users]);
 
   return (
@@ -87,7 +93,7 @@ export default function GroupUsersByLocation() {
           </Text>
           {members.map((user) => (
             <Text key={user.id} style={{ color: "orange" }}>
-              UUID: {user.id}
+              ID{user.id}: {user.username}
             </Text>
           ))}
         </View>

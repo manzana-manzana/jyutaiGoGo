@@ -26,7 +26,7 @@ export default function App() {
       }
 
       // subscriptionの設定
-      const sub: any = await Location.watchPositionAsync(
+      const sub = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
           distanceInterval: 1, // 1m動いたら更新
@@ -57,11 +57,9 @@ export default function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: clientId,
-          location: {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          },
+          user_id: Number(clientId),
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
         }),
       })
         .then((response) => {

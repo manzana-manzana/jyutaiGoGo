@@ -76,34 +76,44 @@ function setupServer() {
   });
 
   app.post("/api/users/locations", async (req, res) => {
-    const { user_id, location } = req.body;
+    const { user_id, latitude, longitude } = req.body;
 
-    if (!req.body || !user_id || !location) {
+    // バリデーション
+    if (!req.body || !user_id || !latitude || !longitude) {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
+    // DBに挿入するデータを作成
     const insertData = {
       user_id,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      updated_at: knex.fn.now(), // 最新時刻を入れる
+      latitude,
+      longitude,
+      updated_at: knex.fn.now(),
     };
 
     console.log(new Date().toLocaleString());
     console.log("🐣 insertData", insertData);
 
     try {
-      // ここでアップサート (onConflict -> merge) を行う
+      // onConflict -> merge でアップサート
       await knex("locations")
         .insert(insertData)
         .onConflict("user_id")
         .merge({
-          latitude: knex.raw("excluded.latitude"), // insertData.latitudeに相当
+          latitude: knex.raw("excluded.latitude"),
           longitude: knex.raw("excluded.longitude"),
-          updated_at: knex.raw("excluded.created_at"),
+          updated_at: knex.raw("excluded.updated_at"),
         });
 
-      return res.status(200).json({ location });
+      // クライアントに返す
+      return res.status(200).json({
+        message: "Upsert succeeded",
+        location: {
+          user_id,
+          latitude,
+          longitude,
+        },
+      });
     } catch (error) {
       console.error("Error upserting location:", error.message);
       return res.status(500).json({ error: "Failed to upsert location" });
@@ -112,14 +122,16 @@ function setupServer() {
 
   app.get("/api/users", async (req, res) => {
     try {
-      const latestLocations = await knex("locations")
-        .select("user_id", "latitude", "longitude", "created_at")
-        .where("created_at", ">=", knex.raw(`NOW() - INTERVAL '10 minutes'`)) // 10分以上経過しているデータを除外
-        .orderBy("user_id") // user_idでソート
-        .orderBy("created_at", "desc") // user_idごとに最新のデータを優先
-        .distinctOn("user_id"); // user_idごとに一意なデータを取得
-
-      res.status(200).json(latestLocations);
+      // locations テーブルからデータ取得しつつ、users テーブルから username もまとめて取得
+      const locationsWithUsername = await knex("locations")
+        .select(
+          "locations.user_id",
+          "locations.latitude",
+          "locations.longitude",
+          "users.username",
+        )
+        .join("users", "locations.user_id", "=", "users.id"); // user_id と users.id をJOIN
+      res.status(200).json(locationsWithUsername);
     } catch (error) {
       console.error("Error fetching locations:", error);
       res.status(500).json({ error: "サーバーでエラーが発生しました。" });

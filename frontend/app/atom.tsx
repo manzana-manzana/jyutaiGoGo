@@ -5,7 +5,7 @@ import { useState } from "react";
 
 // ユーザーデータ型定義
 type User = {
-  id: string;
+  id: number;
   username: string;
   latitude: number;
   longitude: number;
@@ -48,18 +48,25 @@ export const usersAtom = atom<User[]>([]);
 export const groupsAtom = atom<Groups>({});
 
 // 通話グループの参加者データ
-export const currentGroupUsersAtom = atom<User[]>([]);
+export const roomMemberAtom = atom<User[]>([]);
+
+// type User = {
+//   id: number;
+//   username: string;
+//   latitude: number;
+//   longitude: number;
+//   isMyAccount: boolean;
+// };
+//位置情報で設定したルームメンバーの配列(ルーム画面での車表示で使用)
+// export const roomMemberAtom = atom([
+//   { id: "u11111", username: "たろう", isMe: false },
+//   { id: "u22222", username: "しげりんご", isMe: true },
+//   { id: "u33333", username: "ミニオン", isMe: false },
+//   { id: "u4444", username: "炭治郎", isMe: false },
+// ]);
 
 //オープニングムービー終了判定
 export const isOpeningEndAtom = atom<boolean>(false);
-
-//位置情報で設定したルームメンバーの配列(ルーム画面での車表示で使用)
-export const roomMemberAtom = atom([
-  { id: "u11111", username: "たろう", isMe: false },
-  { id: "u22222", username: "しげりんご", isMe: true },
-  { id: "u33333", username: "ミニオン", isMe: false },
-  { id: "u4444", username: "炭治郎", isMe: false },
-]);
 
 //車関係の画像データ
 type CarImages = {
