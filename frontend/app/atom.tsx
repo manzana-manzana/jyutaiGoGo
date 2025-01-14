@@ -79,6 +79,9 @@ export const isOpeningEndAtom = atom<boolean>(false);
 //top画面の文字
 export const fontAtom = atom(require('@/app/features/fetchClientId'))
 
+//top画面の文字
+export const fontAtom = atom(require('@/app/features/fetchClientId'))
+
 //車関係の画像データ
 type CarImages = {
   [key: string]: ImageSourcePropType;
