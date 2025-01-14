@@ -2,17 +2,26 @@ import React, { useEffect } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { styles } from "@/app/style";
 // import {moderateScale} from "react-native-size-matters";
-import { useFonts, NotoSansJP_700Bold } from "@expo-google-fonts/noto-sans-jp";
+// import { useFonts, NotoSansJP_700Bold } from "@expo-google-fonts/noto-sans-jp";
 import Metrics from "./metrics";
 import { BASE_URL } from "@/config";
+import {fontAtom} from "@/app/atom";
+import {useAtom} from "jotai";
 const { verticalScale, moderateScale } = Metrics;
 
 // import {vw, vh} from 'react-native-viewport-units';
 
 export default function Sec0_1_Opening() {
-  let [fontsLoaded] = useFonts({
-    NotoSansJP_700Bold,
-  });
+  const [{useFonts, NotoSansJP_700Bold}] = useAtom(fontAtom)
+  const loadFont = async()=>{
+    let [fontsLoaded] = await useFonts({
+      NotoSansJP_700Bold,
+    });
+  }
+
+  useEffect(() => {
+    loadFont()
+  }, []);
 
   return (
     <View style={styles.container}>

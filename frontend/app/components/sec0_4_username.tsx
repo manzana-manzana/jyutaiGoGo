@@ -6,7 +6,7 @@ import {
   TextInput,
   Pressable,
   Image,
-  Animated,
+  Animated, Alert,
 } from "react-native";
 import { styles } from "@/app/style";
 import Metrics from "./metrics";
@@ -14,6 +14,8 @@ import { clientIdAtom, screenAtom, usernameAtom, usersAtom } from "@/app/atom";
 import { useAtom } from "jotai";
 import { useFetchClientId } from "@/app/features/fetchClientId";
 import { useUsernameRegistration } from "@/app/features/usernameRegistration";
+import {generateUser} from "@/app/features/generateUser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { horizontalScale, verticalScale, moderateScale } = Metrics;
 
 export default function Sec0_4_username() {
@@ -24,12 +26,32 @@ export default function Sec0_4_username() {
   const [isDisplayInput, setIsDisplayInput] = useState(false);
 
   const { fetchClientId } = useFetchClientId(); // カスタムフックの呼び出し
-  const usernameRegister = useUsernameRegistration();
+  // const usernameRegister = useUsernameRegistration();
 
-  useEffect(() => {
-    setUsername(text);
-    console.log("名前入力中: ", text);
-  }, [text]);
+  // useEffect(() => {
+  //   setUsername(text);
+  //   console.log("名前入力中: ", text);
+  // }, [text]);
+
+  const usernameRegister = async() =>{
+    try {
+      // 1. generateUserでusersテーブルにユーザー登録
+      if (!username) {
+        return;
+      }
+      const clientId = await generateUser(username);
+      console.log("✅ usersテーブルに登録完了");
+      // 2. id を Asyncstorageに保存
+      await AsyncStorage.setItem("clientId", String(clientId));
+      console.log(
+          `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
+      );
+      Alert.alert("登録処理", `ニックネーム「${username}」を登録しました！`);
+    } catch (error) {
+      console.log("username登録中にエラー発生:", error);
+    }
+  }
+
 
   const registerUsername = async () => {
     console.log("registerUsername_start");
@@ -39,6 +61,7 @@ export default function Sec0_4_username() {
     } catch (error) {
       console.error("useUsernameRegistrationに失敗", error);
     }
+    setUsername(text);
     setIsDisplayInput(false);
     moveCar(67, -50, true);
     console.log("registerUsername_end");
@@ -116,7 +139,7 @@ export default function Sec0_4_username() {
             maxLength={5}
           />
           <Pressable style={thisStyles.button} onPress={registerUsername}>
-            <Text>登録</Text>
+            <Text style={thisStyles.buttonText}>登録</Text>
           </Pressable>
         </View>
       </Animated.View>
@@ -169,10 +192,11 @@ const thisStyles = StyleSheet.create({
     height: verticalScale(5),
     // margin: 12,
     // borderWidth: 1,
-    // borderRadius: 10,
+    borderRadius: 6,
     padding: 10,
     backgroundColor: "#D9D9D9",
 
+    fontWeight: 'bold',
     fontSize: moderateScale(20),
     textAlign: "center",
     color: "#2B2B2B",
@@ -180,13 +204,19 @@ const thisStyles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    top: verticalScale(10),
-    left: horizontalScale(80),
-    width: horizontalScale(13),
+    top: verticalScale(7),
+    left: horizontalScale(68),
+    width: horizontalScale(15),
     height: verticalScale(5),
-    borderRadius: 40,
+    borderRadius: 6,
     backgroundColor: "#737373",
     justifyContent: "center",
     alignItems: "center",
   },
+  buttonText:{
+    fontSize: moderateScale(20),
+    color:'white',
+    fontWeight: 'bold',
+    fontFamily: "BIZ UDPGothic",
+  }
 });
