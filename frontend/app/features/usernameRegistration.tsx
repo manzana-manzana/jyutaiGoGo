@@ -6,6 +6,7 @@ import { usernameAtom } from "@/app/atom";
 
 export const useUsernameRegistration = () => {
   const [username, setUsername] = useAtom(usernameAtom);
+  console.log('useUsernameRegistration--start---')
 
   return async () => {
     try {

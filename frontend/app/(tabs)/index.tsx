@@ -45,10 +45,12 @@ export default function HomeScreen() {
   // };
 
   useEffect(() => {
+    console.log("🍉:start");
     (async () => {
       const id = await fetchClientId();
       setClientId(id);
       const response = await fetch(`${BASE_URL}/api/users/${id}`);
+      // console.log("🍉:res", response);
       const data = await response.json();
       console.log("🍉:", data);
       setUsername(data.username);
