@@ -61,6 +61,9 @@ export const roomMemberAtom = atom([
   { id: "u4444", username: "炭治郎", isMe: false },
 ]);
 
+//top画面の文字
+export const fontAtom = atom(require('@/app/features/fetchClientId'))
+
 //車関係の画像データ
 type CarImages = {
   [key: string]: ImageSourcePropType;
