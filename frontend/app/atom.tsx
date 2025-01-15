@@ -59,17 +59,15 @@ export const groupsAtom = atom<Groups>({});
 // };
 //位置情報で設定したルームメンバーの配列(ルーム画面での車表示で使用)
 export const roomMemberAtom = atom([
-  { id: 111, username: "たろう", isMyAccount: false },
-  { id: 222, username: "しげりんご", isMyAccount: true },
-  { id: 333, username: "ミニオン", isMyAccount: false },
-  { id: 444, username: "炭治郎", isMyAccount: false },
+  { id: 111, username: "コアラ", isMyAccount: false },
+  { id: 222, username: "パンダ", isMyAccount: true },
 ]);
 
 //オープニングムービー終了判定
 export const isOpeningEndAtom = atom<boolean>(false);
 
 //top画面の文字
-export const fontAtom = atom(require('@/app/features/fetchClientId'))
+export const fontAtom = atom(require("@/app/features/fetchClientId"));
 
 //車関係の画像データ
 type CarImages = {

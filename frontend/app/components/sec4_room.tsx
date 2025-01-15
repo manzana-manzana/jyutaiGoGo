@@ -300,25 +300,25 @@ export default function Sec4_Room() {
           backgroundColor: "yellow",
         }}
       >
-        <Button
-          title="人数を増やす(停止中)"
-          // onPress={() => {
-          //   console.log("⭐️up");
-          //   if (roomMember.length <= 5) {
-          //     const random = Math.floor(Math.random() * 1000);
-          //     setRoomMember((prevRoomMember) => [
-          //       ...prevRoomMember,
-          //       {
-          //         id: `u${random}`,
-          //         username: "追加",
-          //         isMyAccount: false,
-          //       },
-          //     ]);
-          //   }
-          // }}
-          color="red"
-          accessibilityLabel="button"
-        />
+        {/*<Button*/}
+        {/*  title="人数を増やす(停止中)"*/}
+        {/*  // onPress={() => {*/}
+        {/*  //   console.log("⭐️up");*/}
+        {/*  //   if (roomMember.length <= 5) {*/}
+        {/*  //     const random = Math.floor(Math.random() * 1000);*/}
+        {/*  //     setRoomMember((prevRoomMember) => [*/}
+        {/*  //       ...prevRoomMember,*/}
+        {/*  //       {*/}
+        {/*  //         id: `u${random}`,*/}
+        {/*  //         username: "追加",*/}
+        {/*  //         isMyAccount: false,*/}
+        {/*  //       },*/}
+        {/*  //     ]);*/}
+        {/*  //   }*/}
+        {/*  // }}*/}
+        {/*  color="red"*/}
+        {/*  accessibilityLabel="button"*/}
+        {/*/>*/}
       </View>
 
       <View
@@ -329,23 +329,23 @@ export default function Sec4_Room() {
           backgroundColor: "skyblue",
         }}
       >
-        <Button
-          title="人数をへらす"
-          onPress={() => {
-            console.log("🩷down");
-            let no = 0;
-            while (no === 0) {
-              const random = Math.floor(Math.random() * roomMember.length);
-              if (!roomMember[random].isMyAccount) {
-                no = random;
-              }
-            }
-            const newArr = roomMember.filter((_, index) => index !== no);
-            setRoomMember(newArr);
-          }}
-          color="red"
-          accessibilityLabel="button"
-        />
+        {/*<Button*/}
+        {/*  title="人数をへらす"*/}
+        {/*  onPress={() => {*/}
+        {/*    console.log("🩷down");*/}
+        {/*    let no = 0;*/}
+        {/*    while (no === 0) {*/}
+        {/*      const random = Math.floor(Math.random() * roomMember.length);*/}
+        {/*      if (!roomMember[random].isMyAccount) {*/}
+        {/*        no = random;*/}
+        {/*      }*/}
+        {/*    }*/}
+        {/*    const newArr = roomMember.filter((_, index) => index !== no);*/}
+        {/*    setRoomMember(newArr);*/}
+        {/*  }}*/}
+        {/*  color="red"*/}
+        {/*  accessibilityLabel="button"*/}
+        {/*/>*/}
       </View>
 
       <View style={[{ opacity: isRoom ? 1 : 0 }, thisStyles.main]}>
@@ -418,9 +418,7 @@ export default function Sec4_Room() {
         >
           <Image //車
             source={
-              carImages[
-                `${isRoom ? member.afterFile : member.beforeFile}`
-              ]
+              carImages[`${isRoom ? member.afterFile : member.beforeFile}`]
             }
             style={{ width: horizontalScale(25) }}
             resizeMode="contain"
