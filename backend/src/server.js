@@ -43,6 +43,7 @@ function setupServer() {
       }
 
       const username = user.username;
+      console.log("⚡️username", username);
 
       res.status(200).json({ username });
     } catch (error) {
