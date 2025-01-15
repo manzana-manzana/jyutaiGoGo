@@ -39,6 +39,7 @@ export default function Sec0_3_Opening() {
     carImages["c7_1"],
     carImages["c6_1"],
   ]);
+  const [isStartDisplay, setIsStartDisplay]=useState(false)
 
   // 初期位置
   const [positions, setPositions] = useState(
@@ -79,6 +80,9 @@ export default function Sec0_3_Opening() {
 
     Animated.stagger(400, animations).start(() => {
       setIsTitleDisplay(true);
+      setTimeout(()=>{
+        setIsStartDisplay(true);
+      }, 1000)
       setTimeout(() => {
         console.log("移動するよ");
         setIsOpeningEnd(true);
@@ -88,6 +92,7 @@ export default function Sec0_3_Opening() {
 
   useEffect(() => {
     console.log("effect------");
+    setIsStartDisplay(false);
     moveImagesSequentially();
   }, []);
 
@@ -97,20 +102,31 @@ export default function Sec0_3_Opening() {
         style={{ width: "100%", height: "100%" }}
         source={require("../../assets/images/sec0_3_opening.png")}
       />
-      <Text
-        style={[{ opacity: isTitleDisplay ? 1 : 0 }, thisStyles.overlayText]}
-      >
-        渋滞GO！GO！
-      </Text>
-      <Text
-        style={[
-          { opacity: isTitleDisplay ? 1 : 0 },
-          thisStyles.overlayText,
-          { top: verticalScale(40) },
-        ]}
-      >
-        {!userName ? "名前未登録" : `${userName}さん`}
-      </Text>
+      <View style={[thisStyles.titleArea,{ opacity: isTitleDisplay ? 1:0 }]}>
+        <Image style={{width:horizontalScale(80)}}
+               resizeMode='contain'
+               source={require("../../assets/images/title.png")}/>
+      </View>
+      <View style={[thisStyles.titleArea,{ top:'55%', opacity: isStartDisplay ? 1:0 }]}>
+        <Image style={{width:horizontalScale(150)}}
+               resizeMode='contain'
+               source={require("../../assets/images/start.png")}/>
+      </View>
+
+      {/*<Text*/}
+      {/*  style={[{ opacity: isTitleDisplay ? 1 : 0 }, thisStyles.overlayText]}*/}
+      {/*>*/}
+      {/*  渋滞GO！GO！*/}
+      {/*</Text>*/}
+      {/*<Text*/}
+      {/*  style={[*/}
+      {/*    { opacity: isTitleDisplay ? 1 : 0 },*/}
+      {/*    thisStyles.overlayText,*/}
+      {/*    { top: verticalScale(40) },*/}
+      {/*  ]}*/}
+      {/*>*/}
+      {/*  {!userName ? "名前未登録" : `${userName}さん`}*/}
+      {/*</Text>*/}
 
       {cars.map((car, index) => (
         <Animated.View
@@ -182,5 +198,19 @@ const thisStyles = StyleSheet.create({
     backgroundColor: "#737373",
     justifyContent: "center",
     alignItems: "center",
+  },
+  titleArea: {
+    position: 'absolute',
+    // justifyContent: 'space-between',
+    alignItems: 'center',
+    justifyContent: "center",
+    top: verticalScale(30),
+    width: horizontalScale(95),
+    height: verticalScale(17),
+    // fontWeight: 'bold',
+    // textAlign: 'center',
+    // backgroundColor: 'white',
+    borderRadius:10,
+
   },
 });
