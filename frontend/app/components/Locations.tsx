@@ -7,7 +7,7 @@ import { useAtom } from "jotai";
 import { locationAtom, clientIdAtom, usernameAtom } from "./../atom";
 import { BASE_URL } from "@/config";
 
-export default function App() {
+export default function Locations() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<any>(null);
   const [location, setLocation] = useAtom(locationAtom);

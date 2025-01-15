@@ -11,6 +11,14 @@ import {useAtomValue} from "jotai/index";
 import { Audio, Video } from "expo-av";
 import {number} from "prop-types";
 
+import GroupUsersByLocation from "@/app/components/GroupUsersByLocation";
+import Locations from "@/app/components/Locations";
+
+// import {Button, View, StyleSheet, Text} from "react-native";
+// import { Audio } from "expo-av";
+// import React, { useState } from "react";
+// import { useAtom, useAtomValue } from "jotai";
+// import {apiAddressAtom, storedAtom, testAtom, uriAtom} from "../atom";
 
 type Ami = {
     recording: null | Audio.Recording;
@@ -244,6 +252,13 @@ export default function Sec1_Wait()  {
 
     return (
         <View style={styles.container}>
+            <Locations/>
+            <Video
+                source={require('../../assets/movies/sec1_wait.mp4')}
+                style={{ width: '70%', height: '40%' }}
+                useNativeControls={false} // react-native-video の controls={false} に相当
+                isLooping // react-native-video の repeat={true} に相当
+            />
             <Image style={{width: '100%', height:'100%'}}
                    source={require('../../assets/images/sec1_wait.png')}/>
 

@@ -8,6 +8,7 @@ import {
   Animated,
   Button,
   ImageSourcePropType,
+  Dimensions,
 } from "react-native";
 import { styles } from "@/app/style";
 import Metrics from "./metrics";
@@ -17,10 +18,13 @@ import {
   isJamAtom,
   isTalkAtom,
   roomMemberAtom,
+  roomInNumberOfPeopleAtom,
 } from "@/app/atom";
 import { useAtom } from "jotai/index";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAtomValue } from "jotai";
+
+import Locations from "@/app/components/Locations";
 
 type Person = {
   id: number;
@@ -45,6 +49,9 @@ export default function Sec4_Room() {
   const [isTalk, setIsTalk] = useAtom(isTalkAtom);
   const carImages = useAtomValue<CarImages>(carImagesAtom);
   const [roomMember, setRoomMember] = useAtom(roomMemberAtom);
+  const [roomInNumberOfPeople, setRoomInNumberOfPeople] = useAtom(
+    roomInNumberOfPeopleAtom,
+  );
 
   const [count, setCount] = useState(10);
   const [isExit, setIsExit] = useState(false);
@@ -285,13 +292,18 @@ export default function Sec4_Room() {
     }
   };
 
+  useEffect(() => {
+    if (roomInNumberOfPeople <= 1 && isRoom) {
+      startExit();
+    }
+  }, [roomInNumberOfPeople, isRoom]);
+
   return (
     <View style={styles.container}>
       <Image
         style={{ width: "100%", height: "100%" }}
         source={require("../../assets/images/sec4_room.png")}
       />
-
       <View
         style={{
           position: "absolute",
@@ -320,7 +332,6 @@ export default function Sec4_Room() {
         {/*  accessibilityLabel="button"*/}
         {/*/>*/}
       </View>
-
       <View
         style={{
           position: "absolute",
@@ -347,107 +358,120 @@ export default function Sec4_Room() {
         {/*  accessibilityLabel="button"*/}
         {/*/>*/}
       </View>
+      return (
+      <View style={styles.container}>
+        <Locations />
+        <Image
+          style={{ width: "100%", height: "100%" }}
+          resizeMode="contain"
+          source={require("../../assets/images/sec4_room.png")}
+        />
 
-      <View style={[{ opacity: isRoom ? 1 : 0 }, thisStyles.main]}>
-        <Pressable style={thisStyles.button} onPress={startExit}>
-          <Text style={thisStyles.buttonText}>退出</Text>
-        </Pressable>
-        <View style={thisStyles.peopleArea}>
-          <Text style={thisStyles.peopleText1}>現在</Text>
-          <Text style={thisStyles.peopleText2}>{members.length}</Text>
-          <Text style={thisStyles.peopleText3}>名</Text>
+        <View style={[{ opacity: isRoom ? 1 : 0 }, thisStyles.main]}>
+          <Pressable style={thisStyles.button} onPress={startExit}>
+            <Text style={thisStyles.buttonText}>退出</Text>
+          </Pressable>
+          <View style={thisStyles.peopleArea}>
+            <Text style={thisStyles.peopleText1}>現在</Text>
+            <Text style={thisStyles.peopleText2}>{members.length}</Text>
+            <Text style={thisStyles.peopleText3}>名</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={[{ opacity: isRoom ? 0 : 1 }, thisStyles.main]}>
-        <LinearGradient
-          colors={["rgba(255, 255, 255, 1)", "rgba(217,217,217,0.7)"]}
-          end={{ x: 0.5, y: 0.75 }}
-          style={thisStyles.waitArea}
-        />
-        <LinearGradient
-          colors={["rgba(217,217,217,0.7)", "rgba(217,217,217,0)"]}
-          end={{ x: 0.5, y: 0.75 }}
-          style={thisStyles.waitArea2}
-        />
-        <Text style={thisStyles.waitText1}>
-          {isCompReading ? "参加しました！" : "読み込み中"}
-        </Text>
+        <View style={[{ opacity: isRoom ? 0 : 1 }, thisStyles.main]}>
+          <LinearGradient
+            colors={["rgba(255, 255, 255, 1)", "rgba(217,217,217,0.7)"]}
+            end={{ x: 0.5, y: 0.75 }}
+            style={thisStyles.waitArea}
+          />
+          <LinearGradient
+            colors={["rgba(217,217,217,0.7)", "rgba(217,217,217,0)"]}
+            end={{ x: 0.5, y: 0.75 }}
+            style={thisStyles.waitArea2}
+          />
+          <Text style={thisStyles.waitText1}>
+            {isCompReading ? "参加しました！" : "読み込み中"}
+          </Text>
 
-        <Image
-          source={carImages[`cw_1`]}
-          style={{
-            width: horizontalScale(25),
-            position: "absolute",
-            top: verticalScale(57),
-            left: horizontalScale(-6),
-          }}
-          resizeMode="contain"
-        />
-        <Image
-          source={carImages[`cw_2`]}
-          style={{
-            width: horizontalScale(25),
-            position: "absolute",
-            top: verticalScale(62),
-            left: horizontalScale(12),
-          }}
-          resizeMode="contain"
-        />
-        <Image
-          source={carImages[`cw_3`]}
-          style={{
-            width: horizontalScale(25),
-            position: "absolute",
-            top: verticalScale(67),
-            left: horizontalScale(-7),
-          }}
-          resizeMode="contain"
-        />
-      </View>
-
-      {members.map((member, index) => (
-        <Animated.View
-          key={index}
-          style={{
-            position: "absolute",
-            top: positions[index].top,
-            left: positions[index].left,
-            zIndex: positions[index].zIndex,
-          }}
-        >
-          <Image //車
-            source={
-              carImages[`${isRoom ? member.afterFile : member.beforeFile}`]
-            }
-            style={{ width: horizontalScale(25) }}
+          <Image
+            source={carImages[`cw_1`]}
+            style={{
+              width: horizontalScale(25),
+              position: "absolute",
+              top: verticalScale(57),
+              left: horizontalScale(-6),
+            }}
             resizeMode="contain"
           />
-
-          <View
+          <Image
+            source={carImages[`cw_2`]}
             style={{
-              opacity: isRoom ? 1 : 0,
-              top: verticalScale(-14),
-              left: horizontalScale(2),
+              width: horizontalScale(25),
+              position: "absolute",
+              top: verticalScale(62),
+              left: horizontalScale(12),
+            }}
+            resizeMode="contain"
+          />
+          <Image
+            source={carImages[`cw_3`]}
+            style={{
+              width: horizontalScale(25),
+              position: "absolute",
+              top: verticalScale(67),
+              left: horizontalScale(-7),
+            }}
+            resizeMode="contain"
+          />
+        </View>
+
+        {members.map((member, index) => (
+          <Animated.View
+            key={index}
+            style={{
+              position: "absolute",
+              top: positions[index].top,
+              left: positions[index].left,
+              zIndex: positions[index].zIndex,
             }}
           >
-            <Image //吹き出し
-              source={carImages[`cb_${member.isMyAccount ? member.carNo : 0}`]}
+            <Image //車
+              source={
+                carImages[`${isRoom ? member.afterFile : member.beforeFile}`]
+              }
               style={{ width: horizontalScale(25) }}
               resizeMode="contain"
             />
-            <Text //名前
-              style={thisStyles.nameText}
-            >
-              {member.username}
-            </Text>
-          </View>
-        </Animated.View>
-      ))}
 
-      <View style={[thisStyles.countArea, { opacity: isExit ? 1 : 0 }]}>
-        <Text style={thisStyles.countText1}>まもなくルームから退出します</Text>
-        <Text style={thisStyles.countText2}>{count}</Text>
+            <View
+              style={{
+                opacity: isRoom ? 1 : 0,
+                top: verticalScale(-14),
+                left: horizontalScale(2),
+              }}
+            >
+              <Image //吹き出し
+                source={
+                  carImages[`cb_${member.isMyAccount ? member.carNo : 0}`]
+                }
+                style={{ width: horizontalScale(25) }}
+                resizeMode="contain"
+              />
+              <Text //名前
+                style={thisStyles.nameText}
+              >
+                {member.username}
+              </Text>
+            </View>
+          </Animated.View>
+        ))}
+
+        <View style={[thisStyles.countArea, { opacity: isExit ? 1 : 0 }]}>
+          <Text style={thisStyles.countText1}>
+            まもなくルームから退出します
+          </Text>
+          <Text style={thisStyles.countText2}>{count}</Text>
+        </View>
       </View>
     </View>
   );
