@@ -20,7 +20,7 @@ const { horizontalScale, verticalScale, moderateScale } = Metrics;
 
 export default function Sec0_4_username() {
   const [text, setText] = useState("");
-  const [username, setUsername] = useAtom(usernameAtom);
+  const [userName, setUserName] = useAtom(usernameAtom);
   const [clientId, setClientId] = useAtom(clientIdAtom);
   const [screen, setScreen] = useAtom(screenAtom);
   const [isDisplayInput, setIsDisplayInput] = useState(false);
@@ -29,39 +29,54 @@ export default function Sec0_4_username() {
   // const usernameRegister = useUsernameRegistration();
 
   // useEffect(() => {
-  //   setUsername(text);
+  //   setUserName(text);
   //   console.log("名前入力中: ", text);
   // }, [text]);
 
-  const usernameRegister = async() =>{
-    try {
-      // 1. generateUserでusersテーブルにユーザー登録
-      if (!username) {
-        return;
-      }
-      const clientId = await generateUser(username);
-      console.log("✅ usersテーブルに登録完了");
-      // 2. id を Asyncstorageに保存
-      await AsyncStorage.setItem("clientId", String(clientId));
-      console.log(
-          `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
-      );
-      Alert.alert("登録処理", `ニックネーム「${username}」を登録しました！`);
-    } catch (error) {
-      console.log("username登録中にエラー発生:", error);
-    }
+
+  const usernameRegister=async ()=>{
+
+    console.log('registerUserName')
+    await AsyncStorage.setItem("username", text);
+    setUserName(text)
+    // setScreen('sec1')
+    setIsDisplayInput(false)
+    moveCar(67,-50,true)
+    const clientId = await generateUser(text);
+    console.log(
+                `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
+            );
+    console.log('registerUserName_end')
   }
+  // const usernameRegister = async() =>{
+  //   try {
+  //     // 1. generateUserでusersテーブルにユーザー登録
+  //     if (!username) {
+  //       return;
+  //     }
+  //     const clientId = await generateUser(username);
+  //     console.log("✅ usersテーブルに登録完了");
+  //     // 2. id を Asyncstorageに保存
+  //     await AsyncStorage.setItem("clientId", String(clientId));
+  //     console.log(
+  //         `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
+  //     );
+  //     // Alert.alert("登録処理", `ニックネーム「${username}」を登録しました！`);
+  //   } catch (error) {
+  //     console.log("username登録中にエラー発生:", error);
+  //   }
+  // }
 
 
   const registerUsername = async () => {
     console.log("registerUsername_start");
-    console.log("🐯username: ", username);
+    console.log("🐯username: ", userName);
     try {
       await usernameRegister();
     } catch (error) {
       console.error("useUsernameRegistrationに失敗", error);
     }
-    setUsername(text);
+    setUserName(text);
     setIsDisplayInput(false);
     moveCar(67, -50, true);
     console.log("registerUsername_end");

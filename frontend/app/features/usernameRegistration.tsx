@@ -21,7 +21,7 @@ export const useUsernameRegistration = () => {
       console.log(
         `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
       );
-      Alert.alert("登録処理", `ニックネーム「${username}」を登録しました！`);
+      // Alert.alert("登録処理", `ニックネーム「${username}」を登録しました！`);
     } catch (error) {
       console.log("username登録中にエラー発生:", error);
     }

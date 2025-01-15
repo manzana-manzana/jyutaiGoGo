@@ -419,7 +419,7 @@ export default function Sec4_Room() {
           <Image //車
             source={
               carImages[
-                `${isCompReading ? member.afterFile : member.beforeFile}`
+                `${isRoom ? member.afterFile : member.beforeFile}`
               ]
             }
             style={{ width: horizontalScale(25) }}
@@ -428,7 +428,7 @@ export default function Sec4_Room() {
 
           <View
             style={{
-              opacity: isDisplayName ? 1 : 0,
+              opacity: isRoom ? 1 : 0,
               top: verticalScale(-14),
               left: horizontalScale(2),
             }}
