@@ -34,20 +34,20 @@ export default function Sec0_4_username() {
   // }, [text]);
 
 
-  const usernameRegister=async ()=>{
-
-    console.log('registerUserName')
-    await AsyncStorage.setItem("username", text);
-    setUserName(text)
-    // setScreen('sec1')
-    setIsDisplayInput(false)
-    moveCar(67,-50,true)
-    const clientId = await generateUser(text);
-    console.log(
-                `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
-            );
-    console.log('registerUserName_end')
-  }
+  // const usernameRegister=async ()=>{
+  //
+  //   console.log('registerUserName')
+  //   await AsyncStorage.setItem("username", text);
+  //   setUserName(text)
+  //   // setScreen('sec1')
+  //   setIsDisplayInput(false)
+  //   moveCar(67,-50,true)
+  //   const clientId = await generateUser(text);
+  //   console.log(
+  //               `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
+  //           );
+  //   console.log('registerUserName_end')
+  // }
   // const usernameRegister = async() =>{
   //   try {
   //     // 1. generateUserでusersテーブルにユーザー登録
@@ -72,7 +72,12 @@ export default function Sec0_4_username() {
     console.log("registerUsername_start");
     console.log("🐯username: ", userName);
     try {
-      await usernameRegister();
+      // await usernameRegister();
+      await AsyncStorage.setItem("username", text);
+      const clientId = await generateUser(text);
+      console.log(
+          `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
+      );
     } catch (error) {
       console.error("useUsernameRegistrationに失敗", error);
     }
