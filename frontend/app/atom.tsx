@@ -48,7 +48,7 @@ export const usersAtom = atom<User[]>([]);
 export const groupsAtom = atom<Groups>({});
 
 // 通話グループの参加者データ
-export const roomMemberAtom = atom<User[]>([]);
+// export const roomMemberAtom = atom<User[]>([]);
 
 // type User = {
 //   id: number;
@@ -58,23 +58,15 @@ export const roomMemberAtom = atom<User[]>([]);
 //   isMyAccount: boolean;
 // };
 //位置情報で設定したルームメンバーの配列(ルーム画面での車表示で使用)
-// export const roomMemberAtom = atom([
-//   { id: "u11111", username: "たろう", isMe: false },
-//   { id: "u22222", username: "しげりんご", isMe: true },
-//   { id: "u33333", username: "ミニオン", isMe: false },
-//   { id: "u4444", username: "炭治郎", isMe: false },
-// ]);
+export const roomMemberAtom = atom([
+  { id: 111, username: "たろう", isMyAccount: false },
+  { id: 222, username: "しげりんご", isMyAccount: true },
+  { id: 333, username: "ミニオン", isMyAccount: false },
+  { id: 444, username: "炭治郎", isMyAccount: false },
+]);
 
 //オープニングムービー終了判定
 export const isOpeningEndAtom = atom<boolean>(false);
-
-//位置情報で設定したルームメンバーの配列(ルーム画面での車表示で使用)
-// export const roomMemberAtom = atom([
-//   { id: "u11111", username: "たろう", isMe: false },
-//   { id: "u22222", username: "しげりんご", isMe: true },
-//   { id: "u33333", username: "ミニオン", isMe: false },
-//   { id: "u4444", username: "炭治郎", isMe: false },
-// ]);
 
 //top画面の文字
 export const fontAtom = atom(require('@/app/features/fetchClientId'))

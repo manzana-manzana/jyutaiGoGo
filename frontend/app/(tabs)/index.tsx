@@ -16,6 +16,7 @@ import Sec0_2_Opening from "@/app/components/sec0_2_opening";
 import Sec0_3_Opening from "@/app/components/sec0_3_opening";
 import Sec0_4_username from "@/app/components/sec0_4_username";
 import Sec4_Room from "@/app/components/sec4_room";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useFonts, NotoSansJP_700Bold } from "@expo-google-fonts/noto-sans-jp";
 import { BASE_URL } from "@/config";
@@ -34,33 +35,33 @@ export default function HomeScreen() {
     NotoSansJP_700Bold,
   });
 
-  // const getUserName = async () => {
-  //   const getName: string | null = await AsyncStorage.getItem("username");
-  //   console.log(getName, typeof getName);
-  //   if (getName) {
-  //     setUsername(getName);
-  //   } else {
-  //     setUsername("");
-  //   }
-  // };
+  const getUserName = async () => {
+    const getName: string | null = await AsyncStorage.getItem("username");
+    console.log(getName, typeof getName);
+    if (getName) {
+      setUsername(getName);
+    } else {
+      setUsername("");
+    }
+  };
 
-  useEffect(() => {
-    console.log("🍉:start");
-    (async () => {
-      const id = await fetchClientId();
-      setClientId(id);
-      const response = await fetch(`${BASE_URL}/api/users/${id}`);
-      // console.log("🍉:res", response);
-      const data = await response.json();
-      console.log("🍉:", data);
-      setUsername(data.username);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   console.log("🍉:start");
+  //   (async () => {
+  //     const id = await fetchClientId();
+  //     setClientId(id);
+  //     const response = await fetch(`${BASE_URL}/api/users/${id}`);
+  //     // console.log("🍉:res", response);
+  //     const data = await response.json();
+  //     console.log("🍉:", data);
+  //     setUsername(data.username);
+  //   })();
+  // }, []);
 
   useEffect(() => {
     switch (screen) {
       case "sec0_1":
-        // getUserName();
+        getUserName();
         setIsOpeningEnd(false);
         setTimeout(() => {
           setScreen("sec0_2");
