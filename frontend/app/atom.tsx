@@ -61,6 +61,7 @@ export const groupsAtom = atom<Groups>({});
 export const roomMemberAtom = atom([
   { id: 111, username: "コアラ", isMyAccount: false },
   { id: 222, username: "パンダ", isMyAccount: true },
+  { id: 222, username: "ペンギン", isMyAccount: false },
 ]);
 
 //オープニングムービー終了判定
