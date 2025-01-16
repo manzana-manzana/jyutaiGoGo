@@ -7,7 +7,7 @@ import { useAtom } from "jotai";
 import { locationAtom, clientIdAtom, usernameAtom } from "./../atom";
 import { BASE_URL } from "@/config";
 
-export default function App() {
+export default function Locations() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<any>(null);
   const [location, setLocation] = useAtom(locationAtom);
@@ -43,12 +43,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!location) return;
+    if (!location || !clientId) return;
 
     const insertLocation = async () => {
       console.log(new Date().toLocaleString());
       console.log("👽location監視のuseEffect");
       console.log("✅ clientId:", clientId);
+      console.log("🦑", Number(clientId));
 
       // バックエンドにデータを送信
       await fetch(`${BASE_URL}/api/users/locations`, {

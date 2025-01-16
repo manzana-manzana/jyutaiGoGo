@@ -8,6 +8,7 @@ import {
   Animated,
   Button,
   ImageSourcePropType,
+  Dimensions,
 } from "react-native";
 import { styles } from "@/app/style";
 import Metrics from "./metrics";
@@ -17,10 +18,13 @@ import {
   isJamAtom,
   isTalkAtom,
   roomMemberAtom,
+  roomInNumberOfPeopleAtom,
 } from "@/app/atom";
 import { useAtom } from "jotai/index";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAtomValue } from "jotai";
+
+import Locations from "@/app/components/Locations";
 
 type Person = {
   id: number;
@@ -45,6 +49,9 @@ export default function Sec4_Room() {
   const [isTalk, setIsTalk] = useAtom(isTalkAtom);
   const carImages = useAtomValue<CarImages>(carImagesAtom);
   const [roomMember, setRoomMember] = useAtom(roomMemberAtom);
+  const [roomInNumberOfPeople, setRoomInNumberOfPeople] = useAtom(
+    roomInNumberOfPeopleAtom,
+  );
 
   const [count, setCount] = useState(10);
   const [isExit, setIsExit] = useState(false);
@@ -117,7 +124,7 @@ export default function Sec4_Room() {
       }
     }
     sortArray.forEach((value, index) => {
-      console.log(value);
+      console.log("🐂sortArrayのvalue: ", value);
     });
     setMembers(sortArray);
     console.log("----placeMultipleCars-end--", sortArray.length, "人/members");
@@ -285,68 +292,20 @@ export default function Sec4_Room() {
     }
   };
 
+  useEffect(() => {
+    if (roomInNumberOfPeople <= 1 && isRoom) {
+      startExit();
+    }
+  }, [roomInNumberOfPeople, isRoom]);
+
   return (
     <View style={styles.container}>
+      <Locations />
       <Image
         style={{ width: "100%", height: "100%" }}
+        resizeMode="contain"
         source={require("../../assets/images/sec4_room.png")}
       />
-
-      <View
-        style={{
-          position: "absolute",
-          top: "65%",
-          left: "70%",
-          backgroundColor: "yellow",
-        }}
-      >
-        {/*<Button*/}
-        {/*  title="人数を増やす(停止中)"*/}
-        {/*  // onPress={() => {*/}
-        {/*  //   console.log("⭐️up");*/}
-        {/*  //   if (roomMember.length <= 5) {*/}
-        {/*  //     const random = Math.floor(Math.random() * 1000);*/}
-        {/*  //     setRoomMember((prevRoomMember) => [*/}
-        {/*  //       ...prevRoomMember,*/}
-        {/*  //       {*/}
-        {/*  //         id: `u${random}`,*/}
-        {/*  //         username: "追加",*/}
-        {/*  //         isMyAccount: false,*/}
-        {/*  //       },*/}
-        {/*  //     ]);*/}
-        {/*  //   }*/}
-        {/*  // }}*/}
-        {/*  color="red"*/}
-        {/*  accessibilityLabel="button"*/}
-        {/*/>*/}
-      </View>
-
-      <View
-        style={{
-          position: "absolute",
-          top: "70%",
-          left: "70%",
-          backgroundColor: "skyblue",
-        }}
-      >
-        {/*<Button*/}
-        {/*  title="人数をへらす"*/}
-        {/*  onPress={() => {*/}
-        {/*    console.log("🩷down");*/}
-        {/*    let no = 0;*/}
-        {/*    while (no === 0) {*/}
-        {/*      const random = Math.floor(Math.random() * roomMember.length);*/}
-        {/*      if (!roomMember[random].isMyAccount) {*/}
-        {/*        no = random;*/}
-        {/*      }*/}
-        {/*    }*/}
-        {/*    const newArr = roomMember.filter((_, index) => index !== no);*/}
-        {/*    setRoomMember(newArr);*/}
-        {/*  }}*/}
-        {/*  color="red"*/}
-        {/*  accessibilityLabel="button"*/}
-        {/*/>*/}
-      </View>
 
       <View style={[{ opacity: isRoom ? 1 : 0 }, thisStyles.main]}>
         <Pressable style={thisStyles.button} onPress={startExit}>

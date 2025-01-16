@@ -6,16 +6,19 @@ import {
   TextInput,
   Pressable,
   Image,
-  Animated, Alert,
+  Animated,
+  Alert,
 } from "react-native";
 import { styles } from "@/app/style";
 import Metrics from "./metrics";
-import { clientIdAtom, screenAtom, usernameAtom, usersAtom } from "@/app/atom";
+import { clientIdAtom, screenAtom, usernameAtom } from "@/app/atom";
 import { useAtom } from "jotai";
 import { useFetchClientId } from "@/app/features/fetchClientId";
+// ここは別名で受け取る
 import { useUsernameRegistration } from "@/app/features/usernameRegistration";
-import {generateUser} from "@/app/features/generateUser";
+import { generateUser } from "@/app/features/generateUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const { horizontalScale, verticalScale, moderateScale } = Metrics;
 
 export default function Sec0_4_username() {
@@ -25,65 +28,41 @@ export default function Sec0_4_username() {
   const [screen, setScreen] = useAtom(screenAtom);
   const [isDisplayInput, setIsDisplayInput] = useState(false);
 
-  const { fetchClientId } = useFetchClientId(); // カスタムフックの呼び出し
-  // const usernameRegister = useUsernameRegistration();
+  // ▼ カスタムフックは「customUsernameRegister」という別名で受け取る
+  const customUsernameRegister = useUsernameRegistration();
+  const { fetchClientId } = useFetchClientId();
 
-  // useEffect(() => {
-  //   setUserName(text);
-  //   console.log("名前入力中: ", text);
-  // }, [text]);
+  // 名前の変更を監視
+  useEffect(() => {
+    setUserName(text);
+    console.log("名前入力中: ", text);
+  }, [text]);
 
-
-  // const usernameRegister=async ()=>{
-  //
-  //   console.log('registerUserName')
-  //   await AsyncStorage.setItem("username", text);
-  //   setUserName(text)
-  //   // setScreen('sec1')
-  //   setIsDisplayInput(false)
-  //   moveCar(67,-50,true)
-  //   const clientId = await generateUser(text);
-  //   console.log(
-  //               `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
-  //           );
-  //   console.log('registerUserName_end')
-  // }
-  // const usernameRegister = async() =>{
-  //   try {
-  //     // 1. generateUserでusersテーブルにユーザー登録
-  //     if (!username) {
-  //       return;
-  //     }
-  //     const clientId = await generateUser(username);
-  //     console.log("✅ usersテーブルに登録完了");
-  //     // 2. id を Asyncstorageに保存
-  //     await AsyncStorage.setItem("clientId", String(clientId));
-  //     console.log(
-  //         `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
-  //     );
-  //     // Alert.alert("登録処理", `ニックネーム「${username}」を登録しました！`);
-  //   } catch (error) {
-  //     console.log("username登録中にエラー発生:", error);
-  //   }
-  // }
-
-
+  // 実際に呼び出す登録処理関数 (ボタンから呼び出す想定)
   const registerUsername = async () => {
     console.log("registerUsername_start");
     console.log("🐯username: ", userName);
     try {
-      // await usernameRegister();
+      // 1. ユーザー名を AsyncStorage にセット
       await AsyncStorage.setItem("username", text);
+
+      // 2. DBにユーザー登録
       const clientId = await generateUser(text);
       console.log(
-          `✅ id: ${clientId} をstring型でAsyncStorageに保存しました。`,
+        `✅ id: ${clientId} を string 型で AsyncStorage に保存しました。`,
       );
+
+      // 3. idもストレージに保存
+      await AsyncStorage.setItem("clientId", String(clientId));
     } catch (error) {
       console.error("useUsernameRegistrationに失敗", error);
     }
+
+    // 画面表示側のステート更新
     setUserName(text);
     setIsDisplayInput(false);
     moveCar(67, -50, true);
+
     console.log("registerUsername_end");
   };
 
@@ -116,6 +95,7 @@ export default function Sec0_4_username() {
     });
   };
 
+  // コンポーネントマウント時に実行
   useEffect(() => {
     console.log("effect------");
     moveCar(44, 36, false);
@@ -141,6 +121,7 @@ export default function Sec0_4_username() {
           source={require("../../assets/images/cars/car_name.png")}
         />
 
+        {/* 名前を入力するバルーン部分 */}
         <View style={[{ opacity: isDisplayInput ? 1 : 0 }, thisStyles.area]}>
           <Image
             style={{ width: horizontalScale(100) }}
@@ -163,23 +144,6 @@ export default function Sec0_4_username() {
           </Pressable>
         </View>
       </Animated.View>
-
-      {/*<View style={thisStyles.area}>*/}
-      {/*    <Text style={thisStyles.text}>名前登録してね</Text>*/}
-      {/*    <TextInput*/}
-      {/*        style={[thisStyles.input,thisStyles.text]}*/}
-      {/*        onChangeText={setText}*/}
-      {/*        value={text}*/}
-      {/*        keyboardType={'name-phone-pad'}*/}
-      {/*        />*/}
-      {/*    <Pressable style={thisStyles.button} onPress={registerUsername} >*/}
-      {/*        <Text style={thisStyles.text}>登録</Text>*/}
-      {/*    </Pressable>*/}
-
-      {/*<Pressable style={thisStyles.button} onPress={getUserName} >*/}
-      {/*    <Text style={thisStyles.text}>かくにん</Text>*/}
-      {/*</Pressable>*/}
-      {/*</View>*/}
     </View>
   );
 }
@@ -191,10 +155,6 @@ const thisStyles = StyleSheet.create({
     height: verticalScale(20),
     left: horizontalScale(-36),
     alignItems: "center",
-    // width: horizontalScale(90),
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // backgroundColor:'white'
   },
   text: {
     position: "absolute",
@@ -210,13 +170,10 @@ const thisStyles = StyleSheet.create({
     top: verticalScale(7),
     width: horizontalScale(31),
     height: verticalScale(5),
-    // margin: 12,
-    // borderWidth: 1,
     borderRadius: 6,
     padding: 10,
     backgroundColor: "#D9D9D9",
-
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: moderateScale(20),
     textAlign: "center",
     color: "#2B2B2B",
@@ -233,10 +190,10 @@ const thisStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  buttonText:{
+  buttonText: {
     fontSize: moderateScale(20),
-    color:'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontFamily: "BIZ UDPGothic",
-  }
+  },
 });

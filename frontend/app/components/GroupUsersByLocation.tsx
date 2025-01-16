@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { useAtom, useAtomValue } from "jotai";
-import { usersAtom, groupsAtom, locationAtom, roomMemberAtom } from "./../atom";
+import { usersAtom, groupsAtom, locationAtom, roomMemberAtom, isJamAtom, roomInNumberOfPeopleAtom } from "./../atom";
 import { BASE_URL } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -23,6 +23,8 @@ export default function GroupUsersByLocation() {
   const [groups, setGroups] = useAtom(groupsAtom);
   const location = useAtomValue(locationAtom);
   const [roomMember, setRoomMember] = useAtom(roomMemberAtom);
+  const [isJam, setIsJam] = useAtom(isJamAtom);
+  const [roomInNumberOfPeople, setRoomInNumberOfPeople] = useAtom(roomInNumberOfPeopleAtom);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -48,13 +50,25 @@ export default function GroupUsersByLocation() {
       }
     };
 
-    (async () => {
-      try {
-        await fetchUsers();
-      } catch (error) {
-        console.error(error);
-      }
-    })();
+    // (async () => {
+    //   try {
+    //     await fetchUsers();
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // })();
+
+      // 1分間隔でfetchUsersを実行
+      const interval = setInterval(async () => {
+          try {
+              await fetchUsers();
+          } catch (error) {
+              console.error(error);
+          }
+      }, 60000); // 60秒 = 1分
+
+      // クリーンアップ関数
+      return () => clearInterval(interval);
   }, [location]);
 
   useEffect(() => {
@@ -81,6 +95,18 @@ export default function GroupUsersByLocation() {
       .flat();
 
     setRoomMember(roomMemberData);
+
+      // 自分の位置情報
+      const myLat = Math.floor(location.coords.latitude * 10) / 10;
+      const myLon = Math.floor(location.coords.longitude * 10) / 10;
+      const myGroupKey = `${myLat},${myLon}`;
+
+      console.log("💖自分の位置情報:", { myLat, myLon, myGroupKey });
+      console.log("😀自分のグループのメンバー:", grouped[myGroupKey]);
+
+      const hasMultipleMembers = grouped[myGroupKey]?.length >= 2;
+      setIsJam(hasMultipleMembers);
+      setRoomInNumberOfPeople(grouped[myGroupKey]?.length);
   }, [users]);
 
   return (
