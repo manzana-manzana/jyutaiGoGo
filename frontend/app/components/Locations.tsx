@@ -43,12 +43,13 @@ export default function Locations() {
   }, []);
 
   useEffect(() => {
-    if (!location) return;
+    if (!location || !clientId) return;
 
     const insertLocation = async () => {
       console.log(new Date().toLocaleString());
       console.log("👽location監視のuseEffect");
       console.log("✅ clientId:", clientId);
+      console.log("🦑", Number(clientId));
 
       // バックエンドにデータを送信
       await fetch(`${BASE_URL}/api/users/locations`, {

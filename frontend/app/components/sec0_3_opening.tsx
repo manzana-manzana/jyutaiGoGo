@@ -39,7 +39,7 @@ export default function Sec0_3_Opening() {
     carImages["c7_1"],
     carImages["c6_1"],
   ]);
-  const [isStartDisplay, setIsStartDisplay]=useState(false)
+  const [isStartDisplay, setIsStartDisplay] = useState(false);
 
   // 初期位置
   const [positions, setPositions] = useState(
@@ -80,9 +80,9 @@ export default function Sec0_3_Opening() {
 
     Animated.stagger(400, animations).start(() => {
       setIsTitleDisplay(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         setIsStartDisplay(true);
-      }, 1000)
+      }, 1000);
       setTimeout(() => {
         console.log("移動するよ");
         setIsOpeningEnd(true);
@@ -102,15 +102,24 @@ export default function Sec0_3_Opening() {
         style={{ width: "100%", height: "100%" }}
         source={require("../../assets/images/sec0_3_opening.png")}
       />
-      <View style={[thisStyles.titleArea,{ opacity: isTitleDisplay ? 1:0 }]}>
-        <Image style={{width:horizontalScale(80)}}
-               resizeMode='contain'
-               source={require("../../assets/images/title.png")}/>
+      <View style={[thisStyles.titleArea, { opacity: isTitleDisplay ? 1 : 0 }]}>
+        <Image
+          style={{ width: horizontalScale(80) }}
+          resizeMode="contain"
+          source={require("../../assets/images/title.png")}
+        />
       </View>
-      <View style={[thisStyles.titleArea,{ top:'55%', opacity: isStartDisplay ? 1:0 }]}>
-        <Image style={{width:horizontalScale(150)}}
-               resizeMode='contain'
-               source={require("../../assets/images/start.png")}/>
+      <View
+        style={[
+          thisStyles.titleArea,
+          { top: "55%", opacity: isStartDisplay ? 1 : 0 },
+        ]}
+      >
+        <Image
+          style={{ width: horizontalScale(150) }}
+          resizeMode="contain"
+          source={require("../../assets/images/start.png")}
+        />
       </View>
 
       {/*<Text*/}
@@ -200,9 +209,9 @@ const thisStyles = StyleSheet.create({
     alignItems: "center",
   },
   titleArea: {
-    position: 'absolute',
+    position: "absolute",
     // justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: "center",
     justifyContent: "center",
     top: verticalScale(30),
     width: horizontalScale(95),
@@ -210,7 +219,6 @@ const thisStyles = StyleSheet.create({
     // fontWeight: 'bold',
     // textAlign: 'center',
     // backgroundColor: 'white',
-    borderRadius:10,
-
+    borderRadius: 10,
   },
 });
